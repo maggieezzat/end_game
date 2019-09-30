@@ -64,12 +64,14 @@ If the problem has no solution, the string *There is no solution*. should be ret
 
 - Example Input Grid: 5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3
 The following is a visualization of the above grid to make things easier for you.
-0 1 2 3 4
-0 S W
-1 S I
-2 S S
-3 W T W W
-4 S S W
+
+|  | 0| 1| 2| 3| 4|
+| 0|  |  | S| W|  |
+| 1|  | S| I|  |  |
+| 2|  | S| S|  |  |
+| 3| W| T| W|  | W|
+| 4| S| S|  | W|  |
+
 **I** represents Iron Man, **T** represents Thanos, **S** represents a stone, and **W** represents a warrior. The first row and column just shows the indices and are not part of the grid.
 
 - Example Output:
