@@ -1,7 +1,7 @@
-### Project I: Endgame ###
-# Due: October 17th #
+# Project I: Endgame #
+### Due: October 17th ###
 
-## 1. Project Description##
+## 1. Project Description ##
 
 The planet can be thought of as an mxn grid of cells where 5 <= m; n <= 15. A grid cell is either free or contains one of the following: Iron Man, Thanos, one of Thanos’ warrirors, or an infinity stone. 
 
