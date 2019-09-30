@@ -1,7 +1,7 @@
-###Project I: Endgame 
-#Due: October 17th
+###Project I: Endgame###
+#Due: October 17th#
 
-##1. Project Description
+##1. Project Description##
 
 The planet can be thought of as an mxn grid of cells where 5 <= m; n <= 15. A grid cell is either free or contains one of the following: Iron Man, Thanos, one of Thanos’ warrirors, or an infinity stone. 
 
@@ -36,20 +36,20 @@ uses search to try to formulate a winning plan:
 - `s1,x,s1y,s2x,s2y,s3x,s3y,s4x,s4y,s5x,s5y,s6x,s6y;`
 - `w1x,w1y,w2x,w2y,w3x,w3y,w4x,w4y,w5x,w5y`
 where
-- m and n represent the width and height of the grid respectively.
-- ix and iy represent the x and y starting positions of Iron Man.
-- tx and ty represent the x and y positions of Thanos;
-- six,siy represent the x and y position of stone si.
-- wix,wiy represent the x and y position of warrior wi.
+- `m` and `n` represent the width and height of the grid respectively.
+- `ix` and `iy` represent the x and y starting positions of Iron Man.
+- `tx` and `ty` represent the x and y positions of Thanos;
+- `six,siy` represent the x and y position of stone si.
+- `wix,wiy` represent the x and y position of warrior wi.
 Note that the string representing the grid does not contain any spaces or new lines. It is just formatted this way above to make it more readable. All x and y positions are assuming 0-indexing. The minimum dimensions of the input grid must be at least 5 x 5 with at least 5 warriors.
 
 **strategy** is a *string* indicating the search strategy to be applied:
-- BF for breadth-first search,
-- DF for depth-first search,
-- ID for iterative deepening search,
-- UC for uniform cost search,
-- GR*i* for greedy search, with *i* belong to {*1,2*}; distinguishing the two heuristics.
-- AS*i* for A* search, with *i* belong to {*1,2*}; distinguishing the two heuristics.
+- `BF` for breadth-first search,
+- `DF` for depth-first search,
+- `ID` for iterative deepening search,
+- `UC` for uniform cost search,
+- `GR`*i* for greedy search, with *i* belong to {*1,2*}; distinguishing the two heuristics.
+- `AS`*i* for A* search, with *i* belong to {*1,2*}; distinguishing the two heuristics.
 
 – **visualize** is a *boolean* parameter which, when set to true, results in your program’s side-effecting a visual presentation of the grid as it undergoes the different steps of the discovered solution (if one was discovered).
 
