@@ -1,7 +1,7 @@
-###Project I: Endgame###
-#Due: October 17th#
+### Project I: Endgame ###
+# Due: October 17th #
 
-##1. Project Description##
+## 1. Project Description##
 
 The planet can be thought of as an mxn grid of cells where 5 <= m; n <= 15. A grid cell is either free or contains one of the following: Iron Man, Thanos, one of Thanos’ warrirors, or an infinity stone. 
 
@@ -60,7 +60,7 @@ Note that the string representing the grid does not contain any spaces or new li
 
 If the problem has no solution, the string *There is no solution*. should be returned.
 
-##2. Sample Input/Output:
+## 2. Sample Input/Output:
 
 - Example Input Grid: 5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3
 The following is a visualization of the above grid to make things easier for you.
@@ -76,7 +76,7 @@ The following is a visualization of the above grid to make things easier for you
 `up,collect,left,down,collect,down,collect,right,collect,kill,down,down,left, collect,left,collect,right,up,snap;63;52333`
 This is a breakdown of the computed cost above: up(1), collect(3+1), left(0), down(0), collect(3), down(5), collect(3+5), right(1), collect(3+1), kill(2), down(5), down(1), left(5), collect(3+5), left(1), collect(3+1), right(5), up(5+1), snap.
 
-##3. Deliverables
+## 3. Deliverables
 a) Source code.
 - You should implement a data type for a search-tree node as presented in class.
 - You should implement an abstract data type for a generic search problem, as presented in class.
