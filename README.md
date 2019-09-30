@@ -66,6 +66,7 @@ If the problem has no solution, the string *There is no solution*. should be ret
 The following is a visualization of the above grid to make things easier for you.
 
 |  | 0| 1| 2| 3| 4|
+| :-- | :--: | :--: | :--: | :--: | --: |
 | 0|  |  | S| W|  |
 | 1|  | S| I|  |  |
 | 2|  | S| S|  |  |
