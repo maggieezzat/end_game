@@ -80,7 +80,7 @@ The following is a visualization of the above grid to make things easier for you
 This is a breakdown of the computed cost above: up(1), collect(3+1), left(0), down(0), collect(3), down(5), collect(3+5), right(1), collect(3+1), kill(2), down(5), down(1), left(5), collect(3+5), left(1), collect(3+1), right(5), up(5+1), snap.
 
 ## 3. Deliverables
-a) Source code.
+#### a) Source code. ####
 - You should implement a data type for a search-tree node as presented in class.
 - You should implement an abstract data type for a generic search problem, as presented in class.
 - You should implement the generic search procedure presented in class, taking a problem and a search strategy as inputs. You should make sure that your implementation of search does not allow repeated states and that all your search strategies terminate in under 1 minute.
@@ -88,7 +88,9 @@ a) Source code.
 - You should implement all of the search strategies indicated above together with the required heuristics. A trivial heuristic (e.g. h(n) = 1) is not acceptable. You should make sure that your heuristic function runs in maximum polynomial time in the size of the state representation.
 - Your program should implement the specifications indicated above.
 - Part of the grade will be on how readable your code is. Use explanatory comments whenever possible
-b) Project Report, including the following.
+
+
+#### b) Project Report. ####
 - A brief description of your understanding of the problem.
 - A discussion of your implementation of the search-tree node class.
 - A discussion of your implementation of the search problem class.
