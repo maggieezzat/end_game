@@ -1,37 +1,24 @@
+import java.util.Hashtable;
 
 public abstract class SearchProblem {
+	State initialState;
 	
-	
-	public Operator operators[];
-	public Node initialState;
-	public Node stateSpace[];
-	
-	public abstract Node[] qingFunction();
-	
-	public void generalSearch() {
-		
-	}
-	
-	public boolean goalTestFunction() {
-		
-		return false;
-	}
-	
-	public int pathCostFunction() {
-		
-		return 0;
-	}
-	
-	//public Node transitionFunction(Node currentState) {
-		
-		//Node newState = new Node();
-		//return newState;
-	//}
-	
-	public String search() {
-		
-	}
-	
-	
+	public abstract Boolean goalTest(State state);
+	public abstract State transitionFun(State state, Operator op);
+	public abstract int pathCost(State currentState, Operator op);
+}
 
+class State{
+	Coordinates iPos;
+	//warriors
+	Hashtable <Coordinates, Boolean> stones = new Hashtable <Coordinates, Boolean>(6);
+	int Damage = 0;
+}
+
+class Coordinates{
+	int x;
+	int y;
+}
+enum Operator{
+	Up, Down, Left, Right, Collect, Kill, Snap
 }
