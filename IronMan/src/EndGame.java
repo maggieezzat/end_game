@@ -1,10 +1,11 @@
+import java.util.Hashtable;
 
 public class EndGame extends SearchProblem {
 	
 	@Override
-	public Boolean goalTest(State state) {
+	public boolean goalTest(State state) {
 		// TODO Auto-generated method stub
-		return null;
+		return false;
 	}
 
 	@Override
@@ -20,6 +21,12 @@ public class EndGame extends SearchProblem {
 	}
 	
 	
+	public static void main(String[] args) {
+		
+	}
+	
+	
+	
 
 }
 
@@ -28,4 +35,19 @@ class EG_State extends State{
 	//warriors
 	Hashtable <Coordinates, Boolean> stones = new Hashtable <Coordinates, Boolean>(6);
 	int Damage = 0;
+	
+	
 }
+
+class Coordinates{
+	int x;
+	int y;
+}
+
+
+enum Operator{
+	Up, Down, Left, Right, Collect, Kill, Snap
+}
+
+
+
