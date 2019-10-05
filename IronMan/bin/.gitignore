@@ -1,2 +1,5 @@
-/Coordinates.class
-/State.class
+/EG_State.class
+/SearchProblem$Coordinates.class
+/SearchProblem$Operator.class
+/SearchProblem$State.class
+/SearchProblem$operators.class

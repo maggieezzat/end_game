@@ -22,3 +22,10 @@ public class EndGame extends SearchProblem {
 	
 
 }
+
+class EG_State extends State{
+	Coordinates iPos;
+	//warriors
+	Hashtable <Coordinates, Boolean> stones = new Hashtable <Coordinates, Boolean>(6);
+	int Damage = 0;
+}
