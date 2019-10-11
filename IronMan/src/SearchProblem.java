@@ -25,13 +25,12 @@ public abstract class SearchProblem {
 		
 		
 		while(true) {
-			//System.out.println(q.size());
 			if(q.isEmpty()) 
 				return null;
 			node = q.removeFirst();
 			visited++;
 			if(problem.goalTest(node)) {
-				System.out.println(visited);
+				System.out.println("# Visited Nodes: " + visited);
 				return node;
 			}
 				

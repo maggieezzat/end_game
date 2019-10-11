@@ -15,7 +15,7 @@ public class Main {
 			plan += operators.get(i) + ",";
 		}
 		String cost = solNode.cost + "";
-		return plan + ";" + cost + ";";
+		return plan.substring(0, plan.length() - 1) + "; Cost: " + cost + ";";
 	}
 	
 	
@@ -74,97 +74,100 @@ public class Main {
 		long totalTime;
 		
 		startTime = System.nanoTime();
+		System.out.println("******************* BFS ********************");
 		String sol_bf = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3",Strategy.BF, false);
 		System.out.println(sol_bf);
 		endTime   = System.nanoTime();
 		totalTime = endTime - startTime;
-		System.out.println("BFS DURATION TIME");
-		System.out.println(totalTime/1000000000.0 + " seconds.");
+		System.out.printf("BFS Duration: %.2f seconds", totalTime/1000000000.0);
+		System.out.println();
 		System.out.println("*********************************************");
+		System.out.println();
+		
 		
 		startTime = System.nanoTime();
+		System.out.println("******************* DFS ********************");
 		String sol_df = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3",Strategy.DF, false);
 		System.out.println(sol_df);
 		endTime   = System.nanoTime();
 		totalTime = endTime - startTime;
-		System.out.println("DFS DURATION TIME");
-		System.out.println(totalTime/1000000000.0 + " seconds.");
+		System.out.printf("DFS Duration: %.4f seconds", totalTime/1000000000.0);
+		System.out.println();
 		System.out.println("*********************************************");
+		System.out.println();
+		
 		
 		startTime = System.nanoTime();
+		System.out.println("******************* UCS ********************");
 		String sol_uc = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3",Strategy.UC, false);
 		System.out.println(sol_uc);
 		endTime   = System.nanoTime();
 		totalTime = endTime - startTime;
-		System.out.println("UCS DURATION TIME");
-		System.out.println(totalTime/1000000000.0 + " seconds.");
+		System.out.printf("UCS Duration: %.4f seconds", totalTime/1000000000.0);
+		System.out.println();
 		System.out.println("*********************************************");
-		
-		/*Point stone1 = new Point(4,3);
-		Point stone2 = new Point(4,3);
-		
-		Point stone3 = new Point(1,6);
-		Point stone4 = new Point(1,6);
-		
-		Point war1 = new Point(5,3);
-		Point war2 = new Point(5,3);
-		
-		Point war3 = new Point(8,9);
-		Point war4 = new Point(8,9);
-		
-
-		
-		LinkedList<Point> stones1 = new LinkedList<Point>();
-		LinkedList<Point> stones2 = new LinkedList<Point>();
-		LinkedList<Point> wars1 = new LinkedList<Point>();
-		LinkedList<Point> wars2 = new LinkedList<Point>();
-		
-		stones1.add(stone1);
-		stones1.add(stone3);
-		
-		stones2.add(stone4);
-		stones2.add(stone2);
-		
-		wars1.add(war1);
-		wars1.add(war3);
-		
-		wars2.add(war4);
-		wars2.add(war2);
-		
-		Point im1 = new Point(1,2);
-		Point im2 = new Point(1,2);
+		System.out.println();
 		
 		
-		EG_State st1 = new EG_State(im1, stones1, wars1);
-		EG_State st2 = new EG_State(im2, stones2, wars2);
+//		startTime = System.nanoTime();
+//		System.out.println("******************* IDS ********************");
+//		String sol_id = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3",Strategy.ID, false);
+//		System.out.println(sol_id);
+//		endTime   = System.nanoTime();
+//		totalTime = endTime - startTime;
+//		System.out.printf("IDS Duration: %.4f seconds", totalTime/1000000000.0);
+//		System.out.println();
+//		System.out.println("*********************************************");
+//		System.out.println();
 		
-		//System.out.println(st1.equals(st2));
+		
+//		startTime = System.nanoTime();
+//		System.out.println("******************* AS1 ********************");
+//		String sol_as1 = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3",Strategy.AS1, false);
+//		System.out.println(sol_as1);
+//		endTime   = System.nanoTime();
+//		totalTime = endTime - startTime;
+//		System.out.printf("AS1 Duration: %.4f seconds", totalTime/1000000000.0);
+//		System.out.println();
+//		System.out.println("*********************************************");
+//		System.out.println();
 		
 		
+//		startTime = System.nanoTime();
+//		System.out.println("******************* AS1 ********************");
+//		String sol_as2 = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3",Strategy.AS2, false);
+//		System.out.println(sol_as2);
+//		endTime   = System.nanoTime();
+//		totalTime = endTime - startTime;
+//		System.out.printf("AS2 Duration: %.4f seconds", totalTime/1000000000.0);
+//		System.out.println();
+//		System.out.println("*********************************************");
+//		System.out.println();
 		
 		
+//		startTime = System.nanoTime();
+//		System.out.println("******************* GR1 ********************");
+//		String sol_gr1 = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3",Strategy.GR1, false);
+//		System.out.println(sol_gr1);
+//		endTime   = System.nanoTime();
+//		totalTime = endTime - startTime;
+//		System.out.printf("GR1 Duration: %.4f seconds", totalTime/1000000000.0);
+//		System.out.println();
+//		System.out.println("*********************************************");
+//		System.out.println();
 		
-		//l.add(p);
-		//System.out.println(l.contains(c));*/
 		
-//		Node n1 = new Node(null, null, 1, 1, "Up");
-//		Node n2 = new Node(null, null, 2, 1, "Up");
-//		Node n3 = new Node(null, null, 3, 1, "Up");
-//		Node n4 = new Node(null, null, 4, 1, "Up");
-//		Node n5 = new Node(null, null, 4, 1, "Up");
-//		
-//		
-//		
-//		LinkedList<Node> nodes_list = new LinkedList<Node>();
-//		nodes_list.add(n4);
-//		nodes_list.add(n2);
-//		nodes_list.add(n5);
-//		nodes_list.add(n3);
-//		nodes_list.add(n1);
-		//System.out.println(nodes_list);
-		//Collections.sort(nodes_list, Comparator.comparingInt(node -> node.cost));
+//		startTime = System.nanoTime();
+//		System.out.println("******************* GR1 ********************");
+//		String sol_gr2 = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3",Strategy.GR2, false);
+//		System.out.println(sol_gr2);
+//		endTime   = System.nanoTime();
+//		totalTime = endTime - startTime;
+//		System.out.printf("GR2 Duration: %.4f seconds", totalTime/1000000000.0);
+//		System.out.println();
+//		System.out.println("*********************************************");
+//		System.out.println();
 		
-		//System.out.println(nodes_list);
 	
 	
 	}
