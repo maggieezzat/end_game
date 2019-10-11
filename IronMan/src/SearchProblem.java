@@ -1,3 +1,5 @@
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 
 public abstract class SearchProblem {
@@ -51,7 +53,10 @@ public abstract class SearchProblem {
 						case BF:
 							q.addLast(child); break;
 						case ID:break;
-						case UC:break;
+						case UC: 
+							q.addFirst(child);
+							Collections.sort(q, Comparator.comparingInt(obj -> obj.cost));
+							break;
 						case GR1:break;
 						case GR2:break;
 						case AS1:break;
@@ -87,5 +92,9 @@ class Node{
 		this.parent=parent;
 		this.depth=depth;
 		this.operator = operator;
+	}
+	
+	public String toString() {
+		return "Cost: " + cost;
 	}
 }

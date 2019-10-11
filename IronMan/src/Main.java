@@ -68,10 +68,38 @@ public class Main {
 	
 	
 	public static void main(String []args) {
-		long startTime = System.nanoTime();
-		//System.out.println(startTime);
-		String solution = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3",Strategy.DF, false);
-		System.out.println(solution);
+		
+		long startTime;
+		long endTime;
+		long totalTime;
+		
+		startTime = System.nanoTime();
+		String sol_bf = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3",Strategy.BF, false);
+		System.out.println(sol_bf);
+		endTime   = System.nanoTime();
+		totalTime = endTime - startTime;
+		System.out.println("BFS DURATION TIME");
+		System.out.println(totalTime/1000000000.0 + " seconds.");
+		System.out.println("*********************************************");
+		
+		startTime = System.nanoTime();
+		String sol_df = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3",Strategy.DF, false);
+		System.out.println(sol_df);
+		endTime   = System.nanoTime();
+		totalTime = endTime - startTime;
+		System.out.println("DFS DURATION TIME");
+		System.out.println(totalTime/1000000000.0 + " seconds.");
+		System.out.println("*********************************************");
+		
+		startTime = System.nanoTime();
+		String sol_uc = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3",Strategy.UC, false);
+		System.out.println(sol_uc);
+		endTime   = System.nanoTime();
+		totalTime = endTime - startTime;
+		System.out.println("UCS DURATION TIME");
+		System.out.println(totalTime/1000000000.0 + " seconds.");
+		System.out.println("*********************************************");
+		
 		/*Point stone1 = new Point(4,3);
 		Point stone2 = new Point(4,3);
 		
@@ -117,14 +145,26 @@ public class Main {
 		
 		
 		//l.add(p);
-		//System.out.println(l.contains(c));
+		//System.out.println(l.contains(c));*/
 		
-		System.out.println(endTime);*/
-		long endTime   = System.nanoTime();
-		long totalTime = endTime - startTime;
-		//time in minutes
-		System.out.println("DURATION TIME");
-		System.out.println(totalTime);
+//		Node n1 = new Node(null, null, 1, 1, "Up");
+//		Node n2 = new Node(null, null, 2, 1, "Up");
+//		Node n3 = new Node(null, null, 3, 1, "Up");
+//		Node n4 = new Node(null, null, 4, 1, "Up");
+//		Node n5 = new Node(null, null, 4, 1, "Up");
+//		
+//		
+//		
+//		LinkedList<Node> nodes_list = new LinkedList<Node>();
+//		nodes_list.add(n4);
+//		nodes_list.add(n2);
+//		nodes_list.add(n5);
+//		nodes_list.add(n3);
+//		nodes_list.add(n1);
+		//System.out.println(nodes_list);
+		//Collections.sort(nodes_list, Comparator.comparingInt(node -> node.cost));
+		
+		//System.out.println(nodes_list);
 	
 	
 	}

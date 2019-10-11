@@ -1,6 +1,5 @@
 import java.util.Hashtable;
 import java.util.LinkedList;
-import java.util.Set;
 
 public class EndGame extends SearchProblem {
 	
@@ -159,36 +158,22 @@ public class EndGame extends SearchProblem {
 
 		LinkedList<EG_State> states;
 		
-		if (! this.explored_states.containsKey(newState.iPos)) {
-		//if (! this.explored_states.contains(newState)) {	
+		if (! this.explored_states.containsKey(newState.iPos)) {	
 			states = new LinkedList<EG_State>();
 			states.add(newState);
 			this.explored_states.put(newState.iPos, states);
-			//System.out.println("not same because different iPos");
 			return newState;
 		}
 		else {
 			states = this.explored_states.get(newState.iPos);
 			
 			for(EG_State state : states) {
-				if (newState.equals(state)) {
-					//System.out.println("found repeated state");
-					//System.out.println("SAME");
+				if (newState.equals(state)) 
 					return null;
-				}
-						
 				
 			}
-			//System.out.println("not same because different warriors/stones");
 			states.add(newState);
 			this.explored_states.put(newState.iPos, states);
-			int size = 0;
-			Set<Point> keys = this.explored_states.keySet();
-			for(Point key: keys){
-	            size+= this.explored_states.get(key).size();
-	        }
-			//System.out.println(size);
-			//155 explored states
 			return newState;
 		}
 	}
