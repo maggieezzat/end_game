@@ -9,29 +9,39 @@ public abstract class SearchProblem {
 		this.initialState = initialState;
 		this.operators = operators;
 	}
-	public abstract boolean goalTest(State state);
-	public abstract State transitionFun(State currentState, String op);
-	public abstract int pathCost(State currentState, State newState, String op);
+	
+	public abstract boolean goalTest(Node node);
+	public abstract State transitionFun(Node currentNode, String op);
+	public abstract int pathCost(State prevState, State newState, String op);
 	
 	public static Node genericSearch(SearchProblem problem, Strategy strategy) {
 		
+		int visited=0;
 		LinkedList<Node> q = new LinkedList <Node>();
 		Node node = new Node(problem.initialState, null, 0, 0, null);
 		q.add(node);
+		
+		
 		while(true) {
+			//System.out.println(q.size());
 			if(q.isEmpty()) 
 				return null;
 			node = q.removeFirst();
-			if(problem.goalTest(node.state))
+			visited++;
+			if(problem.goalTest(node)) {
+				System.out.println(visited);
 				return node;
+			}
+				
 			else {
 				LinkedList <Node> children = new LinkedList<Node>();
 				for(String op : problem.operators) {
-					State newState = problem.transitionFun(node.state, op);
+					State newState = problem.transitionFun(node, op);
 					if(newState != null) { //operator applicable to current state
 						int newCost = node.cost + problem.pathCost(node.state, newState, op);
 						Node newNode = new Node(newState,node,newCost,node.depth + 1,op);
 						children.add(newNode);
+
 					}
 				}
 				for(Node child : children) {
@@ -59,15 +69,6 @@ public abstract class SearchProblem {
 abstract class State{
 	
 }
-
-// enum Operator{
-//	
-//	public final String [] operators;
-//	 
-//    private Operator(String [] operators) {
-//        this.operators = operators;
-//    }
-//}
 
 enum Strategy{
 	DF,BF,ID,UC,GR1,GR2,AS1,AS2

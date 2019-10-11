@@ -1,3 +1,8 @@
-/SearchProblem$Operator.class
-/Cell.class
+/EG_State.class
+/EndGame.class
+/Main.class
+/Node.class
 /Point.class
+/SearchProblem.class
+/State.class
+/Strategy.class
