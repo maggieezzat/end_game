@@ -2,10 +2,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 
+
 public abstract class SearchProblem {
 	
 	State initialState;
 	LinkedList <String> operators;
+	
+	public static int exploredNodes;
 	
 	public SearchProblem(State initialState, LinkedList<String>operators) {
 		this.initialState = initialState;
@@ -29,6 +32,7 @@ public abstract class SearchProblem {
 				return null;
 			node = q.removeFirst();
 			visited++;
+			exploredNodes++;
 			if(problem.goalTest(node)) {
 				System.out.println("# Visited Nodes: " + visited);
 				return node;

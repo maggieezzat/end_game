@@ -3,9 +3,10 @@ import java.util.LinkedList;
 
 public class Main {
 	
-	public static String backtracking(Node solNode) {
+	public static String backtracking(Node solNode, int exploredNodes) {
 		ArrayList<String> operators = new ArrayList<String>(solNode.depth);
 		Node node = solNode;
+
 		while(node.operator != null) {
 			operators.add(node.operator);
 			node = node.parent;
@@ -15,7 +16,26 @@ public class Main {
 			plan += operators.get(i) + ",";
 		}
 		String cost = solNode.cost + "";
-		return plan.substring(0, plan.length() - 1) + "; Cost: " + cost + ";";
+		return plan.substring(0, plan.length() - 1) + "; " + cost + "; " + exploredNodes;
+	}
+	
+	public static void visualizePath(Node solNode)
+	{
+		ArrayList<Node> nodes = new ArrayList<Node>();
+		
+		Node node = solNode;
+		while(node.operator != null) {
+			nodes.add(node);
+			node = node.parent;
+		}
+		
+		for(int i=nodes.size()-1; i>=0; i--) {
+			EG_State state = (EG_State)nodes.get(i).state;
+			Point iman = state.iPos;
+			LinkedList<Point> stones = state.stones;
+			LinkedList<Point> warriors = state.warriors;
+			System.out.println(iman.toString()+"; "+stones.toString()+"; "+warriors.toString());
+		}
 	}
 	
 	
@@ -58,10 +78,14 @@ public class Main {
 		
 		EndGame problem = new EndGame(new Point(m,n), iPos, tPos, stones, warriors);
 		Node solNode = SearchProblem.genericSearch(problem, strategy);
+		
+		if(visualize) {
+			visualizePath(solNode);
+		}
 		if(solNode == null)
 			return "There is no solution";
 		else {
-			return backtracking(solNode);
+			return backtracking(solNode, SearchProblem.exploredNodes);
 		}
 		
 	}
