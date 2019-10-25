@@ -39,24 +39,25 @@ public class Main {
 	}
 	
 	
-	public static String solve(String grid, Strategy strategy, boolean visualize) {
+	public static String solve(String grid, String strategy, boolean visualize) {
+		
 		String[] gridArray = grid.split(";");
-		//m,n
-		//ix,iy
-		//tx,ty
-		//six,siy
-		//wix,wiy
+		
+		//grid size
 		int m = Integer.parseInt(gridArray[0].split(",")[0]);
 		int n = Integer.parseInt(gridArray[0].split(",")[1]);
 		
+		//iron man position
 		int ix = Integer.parseInt(gridArray[1].split(",")[0]);
 		int iy = Integer.parseInt(gridArray[1].split(",")[1]);
 		Point iPos = new Point(ix, iy);
 		
+		//thanos position
 		int tx = Integer.parseInt(gridArray[2].split(",")[0]);
 		int ty = Integer.parseInt(gridArray[2].split(",")[1]);
 		Point tPos = new Point(tx, ty);
 		
+		//linkedlist of stones
 		LinkedList<Point> stones = new LinkedList<Point>();
 		int sx, sy;
 		String[]stonesArray = gridArray[3].split(",");
@@ -66,6 +67,7 @@ public class Main {
 			stones.add(new Point(sx, sy));
 		}
 		
+		//linkedlist of warriors
 		LinkedList<Point> warriors = new LinkedList<Point>();
 		int wx, wy;
 		String[]warriorsArray = gridArray[4].split(",");
@@ -75,8 +77,10 @@ public class Main {
 			warriors.add(new Point(wx, wy));
 		}
 				
-		
+		//make a problem
 		EndGame problem = new EndGame(new Point(m,n), iPos, tPos, stones, warriors);
+		
+		//get the solution using the generic search procedure
 		Node solNode = SearchProblem.genericSearch(problem, strategy);
 		
 		if(visualize) {
@@ -85,6 +89,7 @@ public class Main {
 		if(solNode == null)
 			return "There is no solution";
 		else {
+			//from the solution node, get the sequence of all nodes from root to solution
 			return backtracking(solNode, SearchProblem.exploredNodes);
 		}
 		
@@ -99,7 +104,7 @@ public class Main {
 		
 		startTime = System.nanoTime();
 		System.out.println("******************* BFS ********************");
-		String sol_bf = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3",Strategy.BF, false);
+		String sol_bf = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3", "BF", false);
 		System.out.println(sol_bf);
 		endTime   = System.nanoTime();
 		totalTime = endTime - startTime;
@@ -111,7 +116,7 @@ public class Main {
 		
 		startTime = System.nanoTime();
 		System.out.println("******************* DFS ********************");
-		String sol_df = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3",Strategy.DF, false);
+		String sol_df = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3", "DF", false);
 		System.out.println(sol_df);
 		endTime   = System.nanoTime();
 		totalTime = endTime - startTime;
@@ -123,7 +128,7 @@ public class Main {
 		
 		startTime = System.nanoTime();
 		System.out.println("******************* UCS ********************");
-		String sol_uc = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3",Strategy.UC, false);
+		String sol_uc = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3", "UC", false);
 		System.out.println(sol_uc);
 		endTime   = System.nanoTime();
 		totalTime = endTime - startTime;
@@ -135,7 +140,7 @@ public class Main {
 		
 //		startTime = System.nanoTime();
 //		System.out.println("******************* IDS ********************");
-//		String sol_id = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3",Strategy.ID, false);
+//		String sol_id = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3", "ID", false);
 //		System.out.println(sol_id);
 //		endTime   = System.nanoTime();
 //		totalTime = endTime - startTime;
@@ -147,7 +152,7 @@ public class Main {
 		
 //		startTime = System.nanoTime();
 //		System.out.println("******************* AS1 ********************");
-//		String sol_as1 = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3",Strategy.AS1, false);
+//		String sol_as1 = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3", "AS1", false);
 //		System.out.println(sol_as1);
 //		endTime   = System.nanoTime();
 //		totalTime = endTime - startTime;
@@ -159,7 +164,7 @@ public class Main {
 		
 //		startTime = System.nanoTime();
 //		System.out.println("******************* AS1 ********************");
-//		String sol_as2 = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3",Strategy.AS2, false);
+//		String sol_as2 = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3", "AS2", false);
 //		System.out.println(sol_as2);
 //		endTime   = System.nanoTime();
 //		totalTime = endTime - startTime;
@@ -171,7 +176,7 @@ public class Main {
 		
 //		startTime = System.nanoTime();
 //		System.out.println("******************* GR1 ********************");
-//		String sol_gr1 = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3",Strategy.GR1, false);
+//		String sol_gr1 = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3", "GR1", false);
 //		System.out.println(sol_gr1);
 //		endTime   = System.nanoTime();
 //		totalTime = endTime - startTime;
@@ -183,7 +188,7 @@ public class Main {
 		
 //		startTime = System.nanoTime();
 //		System.out.println("******************* GR1 ********************");
-//		String sol_gr2 = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3",Strategy.GR2, false);
+//		String sol_gr2 = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3", "GR2", false);
 //		System.out.println(sol_gr2);
 //		endTime   = System.nanoTime();
 //		totalTime = endTime - startTime;
