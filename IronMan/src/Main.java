@@ -16,6 +16,7 @@ public class Main {
 			plan += operators.get(i) + ",";
 		}
 		String cost = solNode.cost + "";
+		System.out.println(plan.substring(0, plan.length() - 1));
 		return plan.substring(0, plan.length() - 1) + "; " + cost + "; " + exploredNodes;
 	}
 	
@@ -86,8 +87,10 @@ public class Main {
 		if(visualize) {
 			visualizePath(solNode);
 		}
-		if(solNode == null)
+		if(solNode == null) {
+			System.out.println("no solution");
 			return "There is no solution";
+		}
 		else {
 			//from the solution node, get the sequence of all nodes from root to solution
 			return backtracking(solNode, SearchProblem.exploredNodes);

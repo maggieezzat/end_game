@@ -49,6 +49,7 @@ public abstract class SearchProblem {
 				//restart
 				q = new LinkedList <Node>();
 				q.add(new Node(problem.initialState, null, 0, 0, null));
+				problem.resetExploredStates();
 			}
 			else if(q.isEmpty()) //other strategies: There is no solution
 				return null;
@@ -119,6 +120,7 @@ public abstract class SearchProblem {
 	
 	public abstract int heuristicValue1(Node node);
 	public abstract int heuristicValue2(Node node);
+	public abstract void resetExploredStates();
 	
 }
 

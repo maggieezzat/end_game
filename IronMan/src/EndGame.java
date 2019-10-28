@@ -237,6 +237,11 @@ public class EndGame extends SearchProblem {
 		
 		return 3 * state.stones.size() + 1 * numAdjWarriors + 10;
 	}
+
+	@Override
+	public void resetExploredStates() {
+		explored_states = new Hashtable<Point,LinkedList<EG_State>>();
+	}
 }
 
 //a state tuple for the end game problem:
