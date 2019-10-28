@@ -33,6 +33,8 @@ public abstract class SearchProblem {
 	public static Node genericSearch(SearchProblem problem, String strategy) {
 		
 		int visited=0;
+		int depthLimit = 0;
+		
 		//a queue of nodes
 		LinkedList<Node> q = new LinkedList <Node>();
 		
@@ -42,8 +44,13 @@ public abstract class SearchProblem {
 		
 		
 		while(true) {
-			//if the queue is empty, there's no solution
-			if(q.isEmpty()) 
+			if(strategy == "ID" && q.isEmpty()) { //IDS: no solution found for this depth
+				depthLimit++; //increase the depth limit
+				//restart
+				q = new LinkedList <Node>();
+				q.add(new Node(problem.initialState, null, 0, 0, null));
+			}
+			else if(q.isEmpty()) //other strategies: There is no solution
 				return null;
 			
 			//expand the first node in the queue
@@ -56,13 +63,13 @@ public abstract class SearchProblem {
 				System.out.println("# Visited Nodes: " + visited);
 				return node;
 			}
-				
-			//if not, enqueue its children according to the selected search strategy
-			else {
-				//the children of this node are the result of the possible operators
+			
+			//if not, enqueue its children according to the specified search strategy
+			//however, in case of IDS we only generate its children if the node hasn't yet reached the depth limit
+			else if(strategy != "ID" || node.depth != depthLimit) {
+				//the children of this node are the result of all the possible operators
 				LinkedList <Node> children = new LinkedList<Node>();
 				
-				//for all possible operators, make a child node of the state resulting from this operator
 				for(String op : problem.operators) {
 					State newState = problem.transitionFun(node, op);
 					if(newState != null) { //operator applicable to current state
@@ -77,18 +84,32 @@ public abstract class SearchProblem {
 				for(Node child : children) {
 					switch(strategy) {
 						case "DF":
+						case "ID":
 							q.addFirst(child); break;
 						case "BF":
 							q.addLast(child); break;
-						case "ID":break;
-						case "UC": 
+						case "UC":  //Uniform cost is an insertion sort based only on the path cost g(n)
 							q.addFirst(child);
 							Collections.sort(q, Comparator.comparingInt(obj -> obj.cost));
 							break;
-						case "GR1":break;
-						case "GR2":break;
-						case "AS1":break;
-						case "AS2":break;
+						case "GR1": //Greedy is an insertion sort based only on the heuristic function h(n)
+							q.addFirst(child);
+							Collections.sort(q, Comparator.comparingInt(obj -> problem.heuristicValue1(obj)));
+							break;
+						case "GR2":
+							q.addFirst(child);
+							Collections.sort(q, Comparator.comparingInt(obj -> problem.heuristicValue2(obj)));
+							break;
+						case "AS1": //A* is an insertion sort based on the evaluation function h(n) + g(n)
+							q.addFirst(child);
+							Collections.sort(q, Comparator.comparingInt(obj ->
+								(problem.heuristicValue1(obj) + obj.cost)));
+							break;
+						case "AS2":
+							q.addFirst(child);
+							Collections.sort(q, Comparator.comparingInt(obj ->
+								(problem.heuristicValue2(obj) + obj.cost)));
+							break;
 					}
 				}
 			}
@@ -96,17 +117,13 @@ public abstract class SearchProblem {
 		
 	}
 	
+	public abstract int heuristicValue1(Node node);
+	public abstract int heuristicValue2(Node node);
 	
 }
 
 abstract class State{
-	
 }
-
-//enum Strategy{
-//	DF,BF,ID,UC,GR1,GR2,AS1,AS2
-//}
-
 
 //a node is a 5-tuple:
 class Node{

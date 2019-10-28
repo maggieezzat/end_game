@@ -3,24 +3,24 @@ import java.util.LinkedList;
 
 public class EndGame extends SearchProblem {
 	
-	//thanos position
-	Point tPos;
+	// Global variables:
+	Point tPos; //thanos position
 	Point gridSize; // x : 0 --> (gridSize.x - 1), y : 0 --> (gridSize.y - 1)
 	
 	//hashtable of explored states
 	//the key is iron man position
-	//the value is a linkedlist of states with iron man's position the same as the key
+	//the value is a linkedlist of visited states whose *iron man's pos* is the same as the key
 	Hashtable<Point,LinkedList<EG_State>> explored_states;
 	
 	public EndGame(Point gridSize, Point iPos, Point tPos, LinkedList <Point> stones, LinkedList<Point> warriors) {
 		super(new EG_State(iPos, stones, warriors), new LinkedList<String>()); //initial state, operators
-		operators.add("Up");
-		operators.add("Down");
-		operators.add("Left");
-		operators.add("Right");
-		operators.add("Collect");
-		operators.add("Kill");
-		operators.add("Snap");
+		operators.add("up");
+		operators.add("down");
+		operators.add("left");
+		operators.add("right");
+		operators.add("collect");
+		operators.add("kill");
+		operators.add("snap");
 		this.gridSize = gridSize;
 		this.tPos = tPos;
 		explored_states = new Hashtable<Point,LinkedList<EG_State>>();
@@ -32,8 +32,12 @@ public class EndGame extends SearchProblem {
 		//type cast the generic state of the node to an end game state 
 		EG_State currentState = (EG_State)node.state;
 		
-		//a node is the goal if there are no remaining stones, and iron man in the same cell as thanos
-		//he also snapped his fingers and the cost from the root is less than 100
+		/* a node is the goal if: 
+		 * 1) iron man in the same cell as thanos
+		 * 2) there are no remaining stones
+		 * 3) he snapped his fingers
+		 * 4) while the damage (cost from root) was less than 100
+		 */
 		if(currentState.iPos.equals(tPos) && currentState.stones.isEmpty() 
 				&& currentState.snapped == true && node.cost < 100)
 			return true;
@@ -52,11 +56,11 @@ public class EndGame extends SearchProblem {
 		int j = nextState.iPos.y;
 		switch(op) {
 			case "Up":
-				if(i-1 < 0 || nextState.warriors.contains(new Point(i-1,j)))
+				if(i-1 < 0 || nextState.warriors.contains(new Point(i-1,j))) //outside the border or cell with warrior
 					return null; //invalid operator
-				else if(tPos.equals(new Point(i-1,j)) && !nextState.stones.isEmpty())
-					return null;
-				else i -= 1; break;
+				else if(tPos.equals(new Point(i-1,j)) && !nextState.stones.isEmpty()) //he can't move onto Thanos unless he had collected all the stones
+					return null; //invalid operator
+				else i -= 1; break; //valid, update iPos
 			case "Down":
 				if(i+1 >= gridSize.x || nextState.warriors.contains(new Point(i+1,j)))
 					return null; //invalid operator
@@ -85,6 +89,7 @@ public class EndGame extends SearchProblem {
 				} break;
 			case "Kill": 
 				boolean killed = false;
+				//kill warriors in adjacent cells
 				if(i-1 >= 0 && nextState.warriors.contains(new Point(i-1,j)) ) {
 					killed = true;
 					//d += 2;
@@ -115,11 +120,8 @@ public class EndGame extends SearchProblem {
 				break;
 		}
 		
-		
-		
 		nextState.iPos = new Point(i,j);
 		return handleRepeatedStates(nextState);
-		
 	}
 
 	//overriding the path cost function 
@@ -136,8 +138,8 @@ public class EndGame extends SearchProblem {
 		case "Left": break; //no cost for these operators
 		
 		case "Collect": cost += 3; break;
-		case "Kill": cost += (prevS.warriors.size() - newS.warriors.size()) * 2; break; //2*num of warriors in adjacent cells
-		case "Snap": return 0; //no cost
+		case "Kill": cost += (prevS.warriors.size() - newS.warriors.size()) * 2; break; //2*num of warriors killed
+		case "Snap": return 0; //no cost at all
 		}
 		int i = newS.iPos.x;
 		int j = newS.iPos.y;
@@ -170,8 +172,6 @@ public class EndGame extends SearchProblem {
 	{
 
 		LinkedList<EG_State> states;
-		//explored states is a hashtable, with keys as the points (locations) of iron man
-		//and values as linked list of states where iron man is in position key 
 		
 		//if the key is not there, then for sure this is a new state
 		if (! this.explored_states.containsKey(newState.iPos)) {	
@@ -180,7 +180,7 @@ public class EndGame extends SearchProblem {
 			this.explored_states.put(newState.iPos, states);
 			return newState;
 		}
-		else {
+		else { //key found, check the states with this key
 			states = this.explored_states.get(newState.iPos);
 			
 			//if it's a repeated state, returns null
@@ -195,9 +195,51 @@ public class EndGame extends SearchProblem {
 			return newState;
 		}
 	}
+
+	
+	@Override
+	public int heuristicValue1(Node node) {
+		/* this heuristic considers the damage received if this node was chosen for expansion
+		 * from each stone the agent would have to collect
+		 * as well as the damage received when stepping into Thanos's cell
+		 */
+		EG_State state = (EG_State)node.state;
+		return 3 * state.stones.size() + 10;
+	}
+	
+
+	@Override
+	public int heuristicValue2(Node node) {
+		/* this heuristic considers the damage received if this node was chosen for expansion
+		 * from each stone the agent would have to collect
+		 * as well as the damage received from each warrior
+		 * that will be adjacent to the agent when collecting each of the stones
+		 * as well as the damage received when stepping into Thanos's cell
+		 */
+		EG_State state = (EG_State)node.state;
+		int numAdjWarriors = 0; //num of warriors adjacent to the remaining stones
+		
+		for(Point stone : state.stones) {
+			int i = stone.x;
+			int j = stone.y;
+			if(i-1 >= 0)
+				if( state.warriors.contains(new Point(i-1,j)) ) numAdjWarriors += 1;
+				
+			if(i+1 < gridSize.x)
+				if( state.warriors.contains(new Point(i+1,j)) ) numAdjWarriors += 1;
+			
+			if(j+1 < gridSize.y) 
+				if( state.warriors.contains(new Point(i,j+1)) ) numAdjWarriors += 1;
+			
+			if(j-1 >= 0)
+				if( state.warriors.contains(new Point(i,j-1)) ) numAdjWarriors += 1;
+		}
+		
+		return 3 * state.stones.size() + 1 * numAdjWarriors + 10;
+	}
 }
 
-//a state for the end game problem:
+//a state tuple for the end game problem:
 class EG_State extends State{
 	
 	//iron man position
@@ -206,7 +248,6 @@ class EG_State extends State{
 	LinkedList<Point> stones;
 	//remaining warriors positions
 	LinkedList<Point> warriors;
-	
 	//whether he snapped or not yet
 	boolean snapped;
 	
@@ -227,7 +268,9 @@ class EG_State extends State{
 		this.snapped = snapped;
 	}
 	
-	//used to update the state, a state is clones, then applying the operators modified accordingly to give the new state
+	//used for expanding the state's children
+	//we deep clone the current state and then modify it according to the applied operator
+	//to get the child state
 	public EG_State clone() {
 		LinkedList<Point> stonesCopy = new LinkedList<Point>();
 		LinkedList<Point> warriorsCopy = new LinkedList<Point>();
@@ -260,7 +303,7 @@ class EG_State extends State{
 	}
 	
 	//overriding the equals method in order to compare states
-	//this is used to make sure we never enqueue redundant states
+	//this is used to avoid repeated states
 	public boolean equals(Object o)
 	{
 		if (o == this) //reference
@@ -291,7 +334,7 @@ class EG_State extends State{
 	}
 }
 
-//a point is a (x,y) tuple in space
+//a point is a (x,y) tuple in 2D space
 class Point{
 	int x;
 	int y;
@@ -324,8 +367,9 @@ class Point{
 		return this.x + "," + this.y;
 	}
 	
-	//define the hash code for the hash function to be a string with x and y separated with 0, then typecasting this string to an int
-	//this is needed in order to make the points as keys to the hashtable
+	// define the hash code for the hash function to be a string with x and y separated with 0,
+	// then typecasting this string to an int
+	// this is needed in order to make the points as keys to the "explored_states" hashtable
 	public int hashCode() {
 		String x = this.x + "";
 		String y = this.y + "";
