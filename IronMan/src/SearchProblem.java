@@ -1,6 +1,9 @@
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.Set;
 
 
 public abstract class SearchProblem {
@@ -10,11 +13,12 @@ public abstract class SearchProblem {
 	//1. initial state
 	State initialState;
 	//2. a set of operators
-	LinkedList <String> operators;
+	Hashtable <Integer, String> operators;
+	
 	
 	public static int exploredNodes;
 	
-	public SearchProblem(State initialState, LinkedList<String>operators) {
+	public SearchProblem(State initialState, Hashtable <Integer, String> operators) {
 		this.initialState = initialState;
 		this.operators = operators;
 	}
@@ -23,20 +27,20 @@ public abstract class SearchProblem {
 	public abstract boolean goalTest(Node node);
 	
 	//4. a state space / transition function
-	public abstract State transitionFun(Node currentNode, String op);
+	public abstract State transitionFun(Node currentNode, int op);
 	
-	//5. a goal-test function
-	public abstract int pathCost(State prevState, State newState, String op);
+	//5. a path-cost function
+	public abstract int pathCost(State prevState, State newState, int op);
 	
 	
 	//The generic search procedure
-	public static Node genericSearch(SearchProblem problem, String strategy) {
+	public static Node genericSearch(SearchProblem problem, int strategy) {
 		
 		int visited=0;
 		int depthLimit = 0;
 		
 		//a queue of nodes
-		LinkedList<Node> q = new LinkedList <Node>();
+		ArrayList<Node> q = new ArrayList <Node>();
 		
 		//add the initial state's node to the queue
 		Node node = new Node(problem.initialState, null, 0, 0, null);
@@ -44,10 +48,10 @@ public abstract class SearchProblem {
 		
 		
 		while(true) {
-			if(strategy == "ID" && q.isEmpty()) { //IDS: no solution found for this depth
+			if(strategy == 1 && q.isEmpty()) { //IDS: no solution found for this depth
 				depthLimit++; //increase the depth limit
 				//restart
-				q = new LinkedList <Node>();
+				q = new ArrayList <Node>();
 				q.add(new Node(problem.initialState, null, 0, 0, null));
 				problem.resetExploredStates();
 			}
@@ -55,7 +59,7 @@ public abstract class SearchProblem {
 				return null;
 			
 			//expand the first node in the queue
-			node = q.removeFirst();
+			node = q.remove(0);
 			visited++;
 			exploredNodes++;
 			
@@ -67,15 +71,16 @@ public abstract class SearchProblem {
 			
 			//if not, enqueue its children according to the specified search strategy
 			//however, in case of IDS we only generate its children if the node hasn't yet reached the depth limit
-			else if(strategy != "ID" || node.depth != depthLimit) {
+			else if(strategy !=1 || node.depth != depthLimit) {
 				//the children of this node are the result of all the possible operators
-				LinkedList <Node> children = new LinkedList<Node>();
+				ArrayList <Node> children = new ArrayList<Node>();
 				
-				for(String op : problem.operators) {
-					State newState = problem.transitionFun(node, op);
+				Set<Integer> ops = problem.operators.keySet();
+		        for(Integer op: ops){  
+					State newState = problem.transitionFun(node, op.intValue());
 					if(newState != null) { //operator applicable to current state
 						//the transition function returns null when the operator is not applicable
-						int newCost = node.cost + problem.pathCost(node.state, newState, op);
+						int newCost = node.cost + problem.pathCost(node.state, newState, op.intValue());
 						Node newNode = new Node(newState,node,newCost,node.depth + 1,op);
 						children.add(newNode);
 
@@ -84,32 +89,78 @@ public abstract class SearchProblem {
 				//enqueue the children in the queue according to the strategy
 				for(Node child : children) {
 					switch(strategy) {
-						case "DF":
-						case "ID":
-							q.addFirst(child); break;
-						case "BF":
-							q.addLast(child); break;
-						case "UC":  //Uniform cost is an insertion sort based only on the path cost g(n)
-							q.addFirst(child);
-							Collections.sort(q, Comparator.comparingInt(obj -> obj.cost));
+						case 0:
+						case 1:
+							q.add(0, child);
+							//q.addFirst(child);
 							break;
-						case "GR1": //Greedy is an insertion sort based only on the heuristic function h(n)
-							q.addFirst(child);
-							Collections.sort(q, Comparator.comparingInt(obj -> problem.heuristicValue1(obj)));
+						case 2:
+							q.add(child);
+							//q.addLast(child); 
 							break;
-						case "GR2":
-							q.addFirst(child);
-							Collections.sort(q, Comparator.comparingInt(obj -> problem.heuristicValue2(obj)));
+						case 3:  //Uniform cost is an insertion sort based only on the path cost g(n)
+							q.add(child);
+							//q.addFirst(child);
+							//Collections.sort(q, Comparator.comparingInt(obj -> obj.cost));
+							//Collections.sort(q, Comparator.comparingInt(obj -> obj.getCost()));
+							Collections.sort(q, new Comparator<Node>(){
+							     public int compare(Node n1, Node n2){
+							         if(n1.cost == n2.cost)
+							             return 0;
+							         return n1.cost < n2.cost ? -1 : 1;
+							     }
+							});
+							
 							break;
-						case "AS1": //A* is an insertion sort based on the evaluation function h(n) + g(n)
-							q.addFirst(child);
-							Collections.sort(q, Comparator.comparingInt(obj ->
-								(problem.heuristicValue1(obj) + obj.cost)));
+						case 4: //Greedy is an insertion sort based only on the heuristic function h(n)
+							q.add(child);
+							//q.addFirst(child);
+							//Collections.sort(q, Comparator.comparingInt(obj -> problem.heuristicValue1(obj)));
+							Collections.sort(q, new Comparator<Node>(){
+							     public int compare(Node n1, Node n2){
+							         if(problem.heuristicValue1(n1) == problem.heuristicValue1(n2))
+							             return 0;
+							         return problem.heuristicValue1(n1) < problem.heuristicValue1(n2) ? -1 : 1;
+							     }
+							});
 							break;
-						case "AS2":
-							q.addFirst(child);
-							Collections.sort(q, Comparator.comparingInt(obj ->
-								(problem.heuristicValue2(obj) + obj.cost)));
+						case 5:
+							q.add(child);
+							//q.addFirst(child);
+							//Collections.sort(q, Comparator.comparingInt(obj -> problem.heuristicValue2(obj)));
+							Collections.sort(q, new Comparator<Node>(){
+							     public int compare(Node n1, Node n2){
+							         if(problem.heuristicValue2(n1) == problem.heuristicValue2(n2))
+							             return 0;
+							         return problem.heuristicValue2(n1) < problem.heuristicValue2(n2) ? -1 : 1;
+							     }
+							});
+							break;
+						case 6: //A* is an insertion sort based on the evaluation function h(n) + g(n)
+							q.add(child);
+							//q.addFirst(child);
+							//Collections.sort(q, Comparator.comparingInt(obj ->
+							//	(problem.heuristicValue1(obj) + obj.getCost() )));
+							Collections.sort(q, new Comparator<Node>(){
+							     public int compare(Node n1, Node n2){
+							         if(problem.heuristicValue1(n1) + n1.cost == problem.heuristicValue1(n2) + n2.cost)
+							             return 0;
+							         return problem.heuristicValue1(n1) + n1.cost < problem.heuristicValue1(n2) + n2.cost ? -1 : 1;
+							     }
+							});
+							break;
+						case 7:
+							q.add(child);
+							//q.addFirst(child);
+							//Collections.sort(q, Comparator.comparingInt(obj ->
+							//	(problem.heuristicValue2(obj) + obj.getCost() )));
+							Collections.sort(q, new Comparator<Node>(){
+							     public int compare(Node n1, Node n2){
+							         if(problem.heuristicValue2(n1) + n1.cost == problem.heuristicValue2(n2) + n2.cost)
+							             return 0;
+							         return problem.heuristicValue2(n1) + n1.cost < problem.heuristicValue2(n2) + n2.cost ? -1 : 1;
+							     }
+							});
 							break;
 					}
 				}
@@ -143,9 +194,9 @@ class Node{
 	int depth;
 	
 	//5. operator resulting in this node
-	String operator;
+	Integer operator;
 	
-	public Node(State state, Node parent, int cost, int depth, String operator) {
+	public Node(State state, Node parent, int cost, int depth, Integer operator) {
 		this.cost=cost;
 		this.state=state;
 		this.parent=parent;
@@ -155,5 +206,9 @@ class Node{
 	
 	public String toString() {
 		return "Cost: " + cost;
+	}
+	
+	public int getCost() {
+		return this.cost;
 	}
 }

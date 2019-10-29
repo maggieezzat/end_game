@@ -19,6 +19,7 @@ public class EndGameTests {
 	String grid14 = "14,14;2,13;12,7;8,6,9,4,7,1,4,4,4,7,2,3;8,13,0,4,0,8,5,7,10,0";
 	String grid15 = "15,15;12,13;5,7;7,0,9,14,14,8,5,8,8,9,8,4;6,6,4,3,10,2,7,4,3,11";
 
+/*
 	@Test(timeout = 70000)
 	public void testa1() {
 		String solution = Main.solve(grid5, "BF", false);
@@ -95,7 +96,8 @@ public class EndGameTests {
 
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid15, solution));
 	}
-
+*/
+/*
 	@Test(timeout = 70000)
 	public void testb1() {
 		String solution = Main.solve(grid5, "DF", false);
@@ -172,7 +174,8 @@ public class EndGameTests {
 
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid15, solution));
 	}
-
+*/
+/*
 	@Test(timeout = 70000)
 	public void testc1() {
 		String solution = Main.solve(grid5, "ID", false);
@@ -242,14 +245,14 @@ public class EndGameTests {
 
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid14, solution));
 	}
-
+*/
 	@Test(timeout = 80000)
 	public void testc11() {
 		String solution = Main.solve(grid15, "ID", false);
 
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid15, solution));
 	}
-
+/*
 	@Test(timeout = 70000)
 	public void testd1() {
 		String solution = Main.solve(grid5, "GR1", false);
@@ -403,7 +406,8 @@ public class EndGameTests {
 
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid15, solution));
 	}
-
+*/
+/*
 	@Test(timeout = 70000)
 	public void testf1() {
 		String solution = Main.solve(grid5, "UC", false);
@@ -459,7 +463,7 @@ public class EndGameTests {
 
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid12, solution));
 	}
-
+*/
 	@Test(timeout = 70000)
 	public void testf9() {
 		String solution = Main.solve(grid13, "UC", false);
@@ -480,7 +484,7 @@ public class EndGameTests {
 
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid15, solution));
 	}
-
+/*
 	@Test(timeout = 70000)
 	public void testg1() {
 		String solution = Main.solve(grid5, "AS1", false);
@@ -536,7 +540,7 @@ public class EndGameTests {
 
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid12, solution));
 	}
-
+*/
 	@Test(timeout = 70000)
 	public void testg9() {
 		String solution = Main.solve(grid13, "AS1", false);
@@ -557,7 +561,7 @@ public class EndGameTests {
 
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid15, solution));
 	}
-
+/*
 	@Test(timeout = 70000)
 	public void testh1() {
 		String solution = Main.solve(grid5, "AS2", false);
@@ -571,7 +575,7 @@ public class EndGameTests {
 
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid6, solution));
 	}
-
+*/
 	@Test(timeout = 70000)
 	public void testh3() {
 		String solution = Main.solve(grid7, "AS2", false);
