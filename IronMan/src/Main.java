@@ -1,16 +1,14 @@
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.LinkedList;
 
 public class Main {
 	
-	public static String backtracking(Node solNode, int exploredNodes, Hashtable<Integer, String> problemOps) {
+	public static String backtracking(Node solNode, int exploredNodes) {
 		ArrayList<String> operators = new ArrayList<String>(solNode.depth);
 		Node node = solNode;
 
 		while(node.operator != null) {
-			String op = problemOps.get(node.operator);
-			operators.add(op);
+			operators.add(node.operator);
 			node = node.parent;
 		}
 		String plan = "";
@@ -18,6 +16,7 @@ public class Main {
 			plan += operators.get(i) + ",";
 		}
 		String cost = solNode.cost + "";
+		System.out.println(plan.substring(0, plan.length() - 1));
 		return plan.substring(0, plan.length() - 1) + "; " + cost + "; " + exploredNodes;
 	}
 	
@@ -34,8 +33,8 @@ public class Main {
 		for(int i=nodes.size()-1; i>=0; i--) {
 			EG_State state = (EG_State)nodes.get(i).state;
 			Point iman = state.iPos;
-			ArrayList<Point> stones = state.stones;
-			ArrayList<Point> warriors = state.warriors;
+			LinkedList<Point> stones = state.stones;
+			LinkedList<Point> warriors = state.warriors;
 			System.out.println(iman.toString()+"; "+stones.toString()+"; "+warriors.toString());
 		}
 	}
@@ -60,7 +59,7 @@ public class Main {
 		Point tPos = new Point(tx, ty);
 		
 		//linkedlist of stones
-		ArrayList<Point> stones = new ArrayList<Point>();
+		LinkedList<Point> stones = new LinkedList<Point>();
 		int sx, sy;
 		String[]stonesArray = gridArray[3].split(",");
 		for(int i=0; i < stonesArray.length-1; i+=2) {
@@ -70,7 +69,7 @@ public class Main {
 		}
 		
 		//linkedlist of warriors
-		ArrayList<Point> warriors = new ArrayList<Point>();
+		LinkedList<Point> warriors = new LinkedList<Point>();
 		int wx, wy;
 		String[]warriorsArray = gridArray[4].split(",");
 		for(int i=0; i < warriorsArray.length-1; i+=2) {
@@ -78,25 +77,12 @@ public class Main {
 			wy = Integer.parseInt(warriorsArray[i+1]);
 			warriors.add(new Point(wx, wy));
 		}
-		
-		int strategyInt = 0;
-		switch(strategy) {
-		case "DF": strategyInt=0; break;
-		case "ID": strategyInt=1; break;
-		case "BF": strategyInt=2; break;
-		case "UC": strategyInt=3; break;
-		case "GR1": strategyInt=4; break;
-		case "GR2": strategyInt=5; break;
-		case "AS1": strategyInt=6; break;
-		case "AS2": strategyInt=7; break;
-		
-		}
 				
 		//make a problem
 		EndGame problem = new EndGame(new Point(m,n), iPos, tPos, stones, warriors);
 		
 		//get the solution using the generic search procedure
-		Node solNode = SearchProblem.genericSearch(problem, strategyInt);
+		Node solNode = SearchProblem.genericSearch(problem, strategy);
 		
 		if(visualize) {
 			visualizePath(solNode);
@@ -107,7 +93,7 @@ public class Main {
 		}
 		else {
 			//from the solution node, get the sequence of all nodes from root to solution
-			return backtracking(solNode, SearchProblem.exploredNodes, problem.operators);
+			return backtracking(solNode, SearchProblem.exploredNodes);
 		}
 		
 	}
@@ -155,64 +141,64 @@ public class Main {
 		System.out.println();
 		
 		
-		startTime = System.nanoTime();
-		System.out.println("******************* IDS ********************");
-		String sol_id = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3", "ID", false);
-		System.out.println(sol_id);
-		endTime   = System.nanoTime();
-		totalTime = endTime - startTime;
-		System.out.printf("IDS Duration: %.4f seconds", totalTime/1000000000.0);
-		System.out.println();
-		System.out.println("*********************************************");
-		System.out.println();
+//		startTime = System.nanoTime();
+//		System.out.println("******************* IDS ********************");
+//		String sol_id = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3", "ID", false);
+//		System.out.println(sol_id);
+//		endTime   = System.nanoTime();
+//		totalTime = endTime - startTime;
+//		System.out.printf("IDS Duration: %.4f seconds", totalTime/1000000000.0);
+//		System.out.println();
+//		System.out.println("*********************************************");
+//		System.out.println();
 		
 		
-		startTime = System.nanoTime();
-		System.out.println("******************* AS1 ********************");
-		String sol_as1 = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3", "AS1", false);
-		System.out.println(sol_as1);
-		endTime   = System.nanoTime();
-		totalTime = endTime - startTime;
-		System.out.printf("AS1 Duration: %.4f seconds", totalTime/1000000000.0);
-		System.out.println();
-		System.out.println("*********************************************");
-		System.out.println();
+//		startTime = System.nanoTime();
+//		System.out.println("******************* AS1 ********************");
+//		String sol_as1 = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3", "AS1", false);
+//		System.out.println(sol_as1);
+//		endTime   = System.nanoTime();
+//		totalTime = endTime - startTime;
+//		System.out.printf("AS1 Duration: %.4f seconds", totalTime/1000000000.0);
+//		System.out.println();
+//		System.out.println("*********************************************");
+//		System.out.println();
 		
 		
-		startTime = System.nanoTime();
-		System.out.println("******************* AS2 ********************");
-		String sol_as2 = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3", "AS2", false);
-		System.out.println(sol_as2);
-		endTime   = System.nanoTime();
-		totalTime = endTime - startTime;
-		System.out.printf("AS2 Duration: %.4f seconds", totalTime/1000000000.0);
-		System.out.println();
-		System.out.println("*********************************************");
-		System.out.println();
+//		startTime = System.nanoTime();
+//		System.out.println("******************* AS1 ********************");
+//		String sol_as2 = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3", "AS2", false);
+//		System.out.println(sol_as2);
+//		endTime   = System.nanoTime();
+//		totalTime = endTime - startTime;
+//		System.out.printf("AS2 Duration: %.4f seconds", totalTime/1000000000.0);
+//		System.out.println();
+//		System.out.println("*********************************************");
+//		System.out.println();
 		
 		
-		startTime = System.nanoTime();
-		System.out.println("******************* GR1 ********************");
-		String sol_gr1 = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3", "GR1", false);
-		System.out.println(sol_gr1);
-		endTime   = System.nanoTime();
-		totalTime = endTime - startTime;
-		System.out.printf("GR1 Duration: %.4f seconds", totalTime/1000000000.0);
-		System.out.println();
-		System.out.println("*********************************************");
-		System.out.println();
+//		startTime = System.nanoTime();
+//		System.out.println("******************* GR1 ********************");
+//		String sol_gr1 = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3", "GR1", false);
+//		System.out.println(sol_gr1);
+//		endTime   = System.nanoTime();
+//		totalTime = endTime - startTime;
+//		System.out.printf("GR1 Duration: %.4f seconds", totalTime/1000000000.0);
+//		System.out.println();
+//		System.out.println("*********************************************");
+//		System.out.println();
 		
 		
-		startTime = System.nanoTime();
-		System.out.println("******************* GR1 ********************");
-		String sol_gr2 = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3", "GR2", false);
-		System.out.println(sol_gr2);
-		endTime   = System.nanoTime();
-		totalTime = endTime - startTime;
-		System.out.printf("GR2 Duration: %.4f seconds", totalTime/1000000000.0);
-		System.out.println();
-		System.out.println("*********************************************");
-		System.out.println();
+//		startTime = System.nanoTime();
+//		System.out.println("******************* GR1 ********************");
+//		String sol_gr2 = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3", "GR2", false);
+//		System.out.println(sol_gr2);
+//		endTime   = System.nanoTime();
+//		totalTime = endTime - startTime;
+//		System.out.printf("GR2 Duration: %.4f seconds", totalTime/1000000000.0);
+//		System.out.println();
+//		System.out.println("*********************************************");
+//		System.out.println();
 		
 	
 	
