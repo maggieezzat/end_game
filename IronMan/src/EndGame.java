@@ -140,8 +140,7 @@ public class EndGame extends SearchProblem {
 		
 		//checking the cost of adjacency:
 		//adjacent to thanos or adjacent to warriors
-		//if( tPos.equals(new Point(i,j)) ) cost += 5;
-		if( tPos.x==i && tPos.y==j) cost += 5;
+		if( tPos.equals(new Point(i,j)) ) cost += 5;
 		if(i-1 >= 0) { //check up for adjacency-damage
 			if( newS.warriors.contains(new Point(i-1,j)) ) cost += 1;
 			if( tPos.equals(new Point(i-1,j)) ) cost += 5;
