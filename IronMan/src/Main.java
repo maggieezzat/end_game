@@ -81,8 +81,21 @@ public class Main {
 		//make a problem
 		EndGame problem = new EndGame(new Point(m,n), iPos, tPos, stones, warriors);
 		
+		int strategyInt = 0;
+		switch(strategy) {
+		case "DF": strategyInt=0; break;
+		case "ID": strategyInt=1; break;
+		case "BF": strategyInt=2; break;
+		case "UC": strategyInt=3; break;
+		case "GR1": strategyInt=4; break;
+		case "GR2": strategyInt=5; break;
+		case "AS1": strategyInt=6; break;
+		case "AS2": strategyInt=7; break;
+		
+		}
+		
 		//get the solution using the generic search procedure
-		Node solNode = SearchProblem.genericSearch(problem, strategy);
+		Node solNode = SearchProblem.genericSearch(problem, strategyInt);
 		
 		if(visualize) {
 			visualizePath(solNode);

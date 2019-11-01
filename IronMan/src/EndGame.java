@@ -58,25 +58,25 @@ public class EndGame extends SearchProblem {
 			case "up":
 				if(i-1 < 0 || nextState.warriors.contains(new Point(i-1,j))) //outside the border or cell with warrior
 					return null; //invalid operator
-				else if(tPos.equals(new Point(i-1,j)) && !nextState.stones.isEmpty()) //he can't move onto Thanos unless he had collected all the stones
+				else if(!nextState.stones.isEmpty() && tPos.equals(new Point(i-1,j))) //he can't move onto Thanos unless he had collected all the stones
 					return null; //invalid operator
 				else i -= 1; break; //valid, update iPos
 			case "down":
 				if(i+1 >= gridSize.x || nextState.warriors.contains(new Point(i+1,j)))
 					return null; //invalid operator
-				else if(tPos.equals(new Point(i+1,j)) && !nextState.stones.isEmpty())
+				else if(!nextState.stones.isEmpty() && tPos.equals(new Point(i+1,j)))
 					return null;
 				else i += 1; break;
 			case "left": 
 				if(j-1 < 0 || nextState.warriors.contains(new Point(i,j-1)))
 					return null; //invalid operator
-				else if(tPos.equals(new Point(i,j-1)) && !nextState.stones.isEmpty() )
+				else if(!nextState.stones.isEmpty() && tPos.equals(new Point(i,j-1)) )
 					return null;
 				else j -= 1; break;
 			case "right": 
 				if(j+1 >= gridSize.y || nextState.warriors.contains(new Point(i,j+1)))
 					return null; //invalid operator
-				else if(tPos.equals(new Point(i,j+1)) && !nextState.stones.isEmpty())
+				else if(!nextState.stones.isEmpty() && tPos.equals(new Point(i,j+1)))
 					return null;
 				else j += 1; break;
 			case "collect":
@@ -84,30 +84,24 @@ public class EndGame extends SearchProblem {
 					return null; //invalid operator
 				else {
 					nextState.stones.remove(nextState.iPos);
-					//System.out.println("collecting");
-					//d += 3;
 				} break;
 			case "kill": 
 				boolean killed = false;
 				//kill warriors in adjacent cells
 				if(i-1 >= 0 && nextState.warriors.contains(new Point(i-1,j)) ) {
 					killed = true;
-					//d += 2;
 					nextState.warriors.remove(new Point(i-1,j));
 					}
 				if(i+1 < gridSize.x && nextState.warriors.contains(new Point(i+1,j)) ) {
 					killed = true;
-					//d += 2;
 					nextState.warriors.remove(new Point(i+1,j));
 					}
 				if(j+1 < gridSize.y && nextState.warriors.contains(new Point(i,j+1)) ) {
 					killed = true;
-					//d += 2;
 					nextState.warriors.remove(new Point(i,j+1));
 				}
 				if(j-1 >= 0 && nextState.warriors.contains(new Point(i,j-1)) ) {
 					killed = true;
-					//d += 2;
 					nextState.warriors.remove(new Point(i,j-1));
 				}
 				if(!killed) return null; //noone to kill ==> invalid operator
@@ -146,7 +140,8 @@ public class EndGame extends SearchProblem {
 		
 		//checking the cost of adjacency:
 		//adjacent to thanos or adjacent to warriors
-		if( tPos.equals(new Point(i,j)) ) cost += 5;
+		//if( tPos.equals(new Point(i,j)) ) cost += 5;
+		if( tPos.x==i && tPos.y==j) cost += 5;
 		if(i-1 >= 0) { //check up for adjacency-damage
 			if( newS.warriors.contains(new Point(i-1,j)) ) cost += 1;
 			if( tPos.equals(new Point(i-1,j)) ) cost += 5;

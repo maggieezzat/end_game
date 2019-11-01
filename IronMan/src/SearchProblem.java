@@ -1,6 +1,10 @@
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
+import java.util.PriorityQueue;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Set;
 
 
 public abstract class SearchProblem {
@@ -30,47 +34,156 @@ public abstract class SearchProblem {
 	
 	
 	//The generic search procedure
-	public static Node genericSearch(SearchProblem problem, String strategy) {
+//	public static Node genericSearch(SearchProblem problem, String strategy) {
+//		
+//		int visited=0;
+//		int depthLimit = 0;
+//		
+//		//a queue of nodes
+//		LinkedList<Node> q = new LinkedList <Node>();
+//		
+//		//add the initial state's node to the queue
+//		Node node = new Node(problem.initialState, null, 0, 0, null);
+//		q.add(node);
+//		
+//		
+//		while(true) {
+//			if(strategy == "ID" && q.isEmpty()) { //IDS: no solution found for this depth
+//				depthLimit++; //increase the depth limit
+//				//restart
+//				q = new LinkedList <Node>();
+//				q.add(new Node(problem.initialState, null, 0, 0, null));
+//				problem.resetExploredStates();
+//			}
+//			else if(q.isEmpty()) //other strategies: There is no solution
+//				return null;
+//			
+//			//expand the first node in the queue
+//			node = q.removeFirst();
+//			visited++;
+//			exploredNodes++;
+//			
+//			//if this node passes the goal test, it is the solution node, return it
+//			if(problem.goalTest(node)) {
+//				System.out.println("# Visited Nodes: " + visited);
+//				return node;
+//			}
+//			
+//			//if not, enqueue its children according to the specified search strategy
+//			//however, in case of IDS we only generate its children if the node hasn't yet reached the depth limit
+//			else if(strategy != "ID" || node.depth != depthLimit) {
+//				//the children of this node are the result of all the possible operators
+//				LinkedList <Node> children = new LinkedList<Node>();
+//				
+//				for(String op : problem.operators) {
+//					State newState = problem.transitionFun(node, op);
+//					if(newState != null) { //operator applicable to current state
+//						//the transition function returns null when the operator is not applicable
+//						int newCost = node.cost + problem.pathCost(node.state, newState, op);
+//						Node newNode = new Node(newState,node,newCost,node.depth + 1,op);
+//						children.add(newNode);
+//
+//					}
+//				}
+//				//enqueue the children in the queue according to the strategy
+//				for(Node child : children) {
+//					switch(strategy) {
+//						case "DF":
+//						case "ID":
+//							q.addFirst(child); break;
+//						case "BF":
+//							q.addLast(child); break;
+//						case "UC":  //Uniform cost is an insertion sort based only on the path cost g(n)
+//							q.addFirst(child);
+//							Collections.sort(q, Comparator.comparingInt(obj -> obj.cost));
+//							break;
+//						case "GR1": //Greedy is an insertion sort based only on the heuristic function h(n)
+//							q.addFirst(child);
+//							Collections.sort(q, Comparator.comparingInt(obj -> problem.heuristicValue1(obj)));
+//							break;
+//						case "GR2":
+//							q.addFirst(child);
+//							Collections.sort(q, Comparator.comparingInt(obj -> problem.heuristicValue2(obj)));
+//							break;
+//						case "AS1": //A* is an insertion sort based on the evaluation function h(n) + g(n)
+//							q.addFirst(child);
+//							Collections.sort(q, Comparator.comparingInt(obj ->
+//								(problem.heuristicValue1(obj) + obj.cost)));
+//							break;
+//						case "AS2":
+//							q.addFirst(child);
+//							Collections.sort(q, Comparator.comparingInt(obj ->
+//								(problem.heuristicValue2(obj) + obj.cost)));
+//							break;
+//					}
+//				}
+//			}
+//		}
+//		
+//	}
+//	
+//	
+	
+public static Node genericSearch(SearchProblem problem, int strategy) {
 		
 		int visited=0;
 		int depthLimit = 0;
 		
-		//a queue of nodes
-		LinkedList<Node> q = new LinkedList <Node>();
-		
-		//add the initial state's node to the queue
+		PriorityQueue<Node> pq = new PriorityQueue<Node>();
+		LinkedList<Node> q = new LinkedList<Node>(); 
+		//initial node (root)
 		Node node = new Node(problem.initialState, null, 0, 0, null);
-		q.add(node);
 		
+		switch (strategy){
+			case 0: q.add(node); break; //DFS
+			case 1: q.add(node); break; //IDS
+			case 2: q.add(node); break; //BFS 
+			case 3: pq = new PriorityQueue<Node>(new ucComparator()); pq.add(node); break; //UCS
+			case 4: pq = new PriorityQueue<Node>(new gr1Comparator(problem)); pq.add(node); break; //GR1
+			case 5: pq = new PriorityQueue<Node>(new gr2Comparator(problem)); pq.add(node); break; //GR2
+			case 6: pq = new PriorityQueue<Node>(new as1Comparator(problem)); pq.add(node); break; //AS1
+			case 7: pq = new PriorityQueue<Node>(new as2Comparator(problem)); pq.add(node); break; //AS2 
+		}
 		
+
 		while(true) {
-			if(strategy == "ID" && q.isEmpty()) { //IDS: no solution found for this depth
-				depthLimit++; //increase the depth limit
-				//restart
-				q = new LinkedList <Node>();
-				q.add(new Node(problem.initialState, null, 0, 0, null));
-				problem.resetExploredStates();
-			}
-			else if(q.isEmpty()) //other strategies: There is no solution
-				return null;
 			
-			//expand the first node in the queue
-			node = q.removeFirst();
+			switch(strategy) {
+				case 0: //DFS
+					if(q.isEmpty()) return null;
+					node = q.removeFirst(); break;
+				case 2: //BFS
+					if(q.isEmpty()) return null;
+					node = q.removeFirst(); break;
+				case 1:	//IDS
+					if(q.isEmpty()) {
+						depthLimit++; //increase the depth limit
+						q = new LinkedList<Node>(); //restart
+						q.add(new Node(problem.initialState, null, 0, 0, null));
+						problem.resetExploredStates();
+					}
+					node = q.removeFirst(); break;
+				case 3: //UCS
+				case 4: //GR1
+				case 5: //GR2
+				case 6: //AS1
+				case 7: if(pq.isEmpty()) return null;
+					node = pq.poll(); break;
+			}
+				
 			visited++;
 			exploredNodes++;
 			
 			//if this node passes the goal test, it is the solution node, return it
-			if(problem.goalTest(node)) {
-				System.out.println("# Visited Nodes: " + visited);
+			if(problem.goalTest(node)) 
 				return node;
-			}
-			
 			//if not, enqueue its children according to the specified search strategy
 			//however, in case of IDS we only generate its children if the node hasn't yet reached the depth limit
-			else if(strategy != "ID" || node.depth != depthLimit) {
+			else if(strategy !=1 || node.depth != depthLimit) {
 				//the children of this node are the result of all the possible operators
-				LinkedList <Node> children = new LinkedList<Node>();
-				
+				ArrayList <Node> children = new ArrayList<Node>();
+				//Set<Integer> ops = problem.operators.keySet();
+		        //for(Integer op: ops){  
 				for(String op : problem.operators) {
 					State newState = problem.transitionFun(node, op);
 					if(newState != null) { //operator applicable to current state
@@ -78,45 +191,29 @@ public abstract class SearchProblem {
 						int newCost = node.cost + problem.pathCost(node.state, newState, op);
 						Node newNode = new Node(newState,node,newCost,node.depth + 1,op);
 						children.add(newNode);
-
 					}
 				}
 				//enqueue the children in the queue according to the strategy
-				for(Node child : children) {
-					switch(strategy) {
-						case "DF":
-						case "ID":
-							q.addFirst(child); break;
-						case "BF":
-							q.addLast(child); break;
-						case "UC":  //Uniform cost is an insertion sort based only on the path cost g(n)
-							q.addFirst(child);
-							Collections.sort(q, Comparator.comparingInt(obj -> obj.cost));
-							break;
-						case "GR1": //Greedy is an insertion sort based only on the heuristic function h(n)
-							q.addFirst(child);
-							Collections.sort(q, Comparator.comparingInt(obj -> problem.heuristicValue1(obj)));
-							break;
-						case "GR2":
-							q.addFirst(child);
-							Collections.sort(q, Comparator.comparingInt(obj -> problem.heuristicValue2(obj)));
-							break;
-						case "AS1": //A* is an insertion sort based on the evaluation function h(n) + g(n)
-							q.addFirst(child);
-							Collections.sort(q, Comparator.comparingInt(obj ->
-								(problem.heuristicValue1(obj) + obj.cost)));
-							break;
-						case "AS2":
-							q.addFirst(child);
-							Collections.sort(q, Comparator.comparingInt(obj ->
-								(problem.heuristicValue2(obj) + obj.cost)));
-							break;
-					}
+		        switch(strategy) {	
+					case 0: for(Node child : children)  q.addFirst(child); break; //DFS
+					case 1: for(Node child : children)  q.addFirst(child); break; //IDS
+					case 2: for(Node child : children)  q.addLast(child);  break; //BFS
+					case 3: //UCS is based only on the path cost g(n)
+					case 4: //Greedy is based only on the heuristic function h(n)
+					case 5:
+					case 6: //A* is based on the evaluation function h(n) + g(n)
+					case 7: for(Node child : children)  pq.add(child); break;	
 				}
-			}
-		}
+			
+			
+			} //end of else if
+			
+		} //end of while True
 		
-	}
+	} //end of genericSearch
+	
+	
+	
 	
 	public abstract int heuristicValue1(Node node);
 	public abstract int heuristicValue2(Node node);
@@ -157,3 +254,77 @@ class Node{
 		return "Cost: " + cost;
 	}
 }
+
+
+class ucComparator implements Comparator<Node>{
+	public int compare(Node n1, Node n2){
+        if(n1.cost == n2.cost)
+            return 0;
+        return n1.cost < n2.cost ? -1 : 1;
+    }
+}
+
+class gr1Comparator implements Comparator<Node>{
+	
+	SearchProblem problem;
+	
+	public gr1Comparator(SearchProblem problem) {
+		this.problem = problem;
+	}
+	
+	public int compare(Node n1, Node n2){
+        if(problem.heuristicValue1(n1) == problem.heuristicValue1(n2))
+            return 0;
+        return problem.heuristicValue1(n1) < problem.heuristicValue1(n2) ? -1 : 1;
+    }
+}
+
+class gr2Comparator implements Comparator<Node>{
+	
+	SearchProblem problem;
+	
+	public gr2Comparator(SearchProblem problem) {
+		this.problem = problem;
+	}
+	
+	public int compare(Node n1, Node n2){
+        if(problem.heuristicValue2(n1) == problem.heuristicValue2(n2))
+            return 0;
+        return problem.heuristicValue2(n1) < problem.heuristicValue2(n2) ? -1 : 1;
+    }
+}
+
+
+class as1Comparator implements Comparator<Node>{
+	
+	SearchProblem problem;
+	
+	public as1Comparator(SearchProblem problem) {
+		this.problem = problem;
+	}
+	public int compare(Node n1, Node n2){
+		if(problem.heuristicValue1(n1) + n1.cost == problem.heuristicValue1(n2) + n2.cost)
+            return 0;
+        return problem.heuristicValue1(n1) + n1.cost < problem.heuristicValue1(n2) + n2.cost ? -1 : 1;    
+	
+	}
+}
+
+
+class as2Comparator implements Comparator<Node>{
+	
+	SearchProblem problem;
+	
+	public as2Comparator(SearchProblem problem) {
+		this.problem = problem;
+	}
+	public int compare(Node n1, Node n2){
+		if(problem.heuristicValue2(n1) + n1.cost == problem.heuristicValue2(n2) + n2.cost)
+            return 0;
+        return problem.heuristicValue2(n1) + n1.cost < problem.heuristicValue2(n2) + n2.cost ? -1 : 1;    
+	
+	}
+}
+
+
+
