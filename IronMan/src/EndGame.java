@@ -8,9 +8,8 @@ public class EndGame extends SearchProblem {
 	Point gridSize; // x : 0 --> (gridSize.x - 1), y : 0 --> (gridSize.y - 1)
 	
 	//hashtable of explored states
-	//the key is iron man position
-	//the value is a linkedlist of visited states whose *iron man's pos* is the same as the key
-	Hashtable<Point,LinkedList<EG_State>> explored_states;
+	//the key and the value both are the EG_State
+	Hashtable<EG_State,EG_State> explored_states;
 	
 	public EndGame(Point gridSize, Point iPos, Point tPos, LinkedList <Point> stones, LinkedList<Point> warriors) {
 		super(new EG_State(iPos, stones, warriors), new LinkedList<String>()); //initial state, operators
@@ -23,7 +22,7 @@ public class EndGame extends SearchProblem {
 		operators.add("snap");
 		this.gridSize = gridSize;
 		this.tPos = tPos;
-		explored_states = new Hashtable<Point,LinkedList<EG_State>>();
+		explored_states = new Hashtable<EG_State,EG_State>();
 	}
 	
 	@Override
@@ -107,7 +106,7 @@ public class EndGame extends SearchProblem {
 				if(!killed) return null; //noone to kill ==> invalid operator
 				break;
 			case "snap": 
-				if(tPos.equals(nextState.iPos) && nextState.stones.isEmpty()) {
+				if(nextState.stones.isEmpty() && tPos.equals(nextState.iPos)) {
 					nextState.snapped = true;
 					return nextState;
 				}
@@ -164,30 +163,13 @@ public class EndGame extends SearchProblem {
 	//checking if a state is a repeated state
 	public EG_State handleRepeatedStates(EG_State newState)
 	{
+		if(! this.explored_states.containsKey(newState) ) {
+			this.explored_states.put(newState, newState);
+			return newState;
+		}
+		else
+			return null;
 
-		LinkedList<EG_State> states;
-		
-		//if the key is not there, then for sure this is a new state
-		if (! this.explored_states.containsKey(newState.iPos)) {	
-			states = new LinkedList<EG_State>();
-			states.add(newState);
-			this.explored_states.put(newState.iPos, states);
-			return newState;
-		}
-		else { //key found, check the states with this key
-			states = this.explored_states.get(newState.iPos);
-			
-			//if it's a repeated state, returns null
-			for(EG_State state : states) {
-				if (newState.equals(state)) 
-					return null;
-				
-			}
-			//if it's a new state, add it and return it
-			states.add(newState);
-			this.explored_states.put(newState.iPos, states);
-			return newState;
-		}
 	}
 
 	
@@ -234,7 +216,7 @@ public class EndGame extends SearchProblem {
 
 	@Override
 	public void resetExploredStates() {
-		explored_states = new Hashtable<Point,LinkedList<EG_State>>();
+		explored_states = new Hashtable<EG_State,EG_State>();
 	}
 }
 
@@ -301,6 +283,7 @@ class EG_State extends State{
 		
 	}
 	
+	@Override
 	//overriding the equals method in order to compare states
 	//this is used to avoid repeated states
 	public boolean equals(Object o)
@@ -331,6 +314,19 @@ class EG_State extends State{
         return false;
       
 	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((iPos == null) ? 0 : iPos.hashCode());
+		result = prime * result + (snapped ? 1231 : 1237);
+		result = prime * result + ((stones == null) ? 0 : stones.hashCode());
+		result = prime * result + ((warriors == null) ? 0 : warriors.hashCode());
+		return result;
+	}
+	
+	
 }
 
 //a point is a (x,y) tuple in 2D space
