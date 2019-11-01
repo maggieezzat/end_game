@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.LinkedList;
 
 public class Main {
 	
