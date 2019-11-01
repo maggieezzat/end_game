@@ -55,31 +55,31 @@ public class EndGame extends SearchProblem {
 		int i = nextState.iPos.x;
 		int j = nextState.iPos.y;
 		switch(op) {
-			case "Up":
+			case "up":
 				if(i-1 < 0 || nextState.warriors.contains(new Point(i-1,j))) //outside the border or cell with warrior
 					return null; //invalid operator
 				else if(tPos.equals(new Point(i-1,j)) && !nextState.stones.isEmpty()) //he can't move onto Thanos unless he had collected all the stones
 					return null; //invalid operator
 				else i -= 1; break; //valid, update iPos
-			case "Down":
+			case "down":
 				if(i+1 >= gridSize.x || nextState.warriors.contains(new Point(i+1,j)))
 					return null; //invalid operator
 				else if(tPos.equals(new Point(i+1,j)) && !nextState.stones.isEmpty())
 					return null;
 				else i += 1; break;
-			case "Left": 
+			case "left": 
 				if(j-1 < 0 || nextState.warriors.contains(new Point(i,j-1)))
 					return null; //invalid operator
 				else if(tPos.equals(new Point(i,j-1)) && !nextState.stones.isEmpty() )
 					return null;
 				else j -= 1; break;
-			case "Right": 
+			case "right": 
 				if(j+1 >= gridSize.y || nextState.warriors.contains(new Point(i,j+1)))
 					return null; //invalid operator
 				else if(tPos.equals(new Point(i,j+1)) && !nextState.stones.isEmpty())
 					return null;
 				else j += 1; break;
-			case "Collect":
+			case "collect":
 				if(!nextState.stones.contains(nextState.iPos))
 					return null; //invalid operator
 				else {
@@ -87,7 +87,7 @@ public class EndGame extends SearchProblem {
 					//System.out.println("collecting");
 					//d += 3;
 				} break;
-			case "Kill": 
+			case "kill": 
 				boolean killed = false;
 				//kill warriors in adjacent cells
 				if(i-1 >= 0 && nextState.warriors.contains(new Point(i-1,j)) ) {
@@ -112,7 +112,7 @@ public class EndGame extends SearchProblem {
 				}
 				if(!killed) return null; //noone to kill ==> invalid operator
 				break;
-			case "Snap": 
+			case "snap": 
 				if(tPos.equals(nextState.iPos) && nextState.stones.isEmpty()) {
 					nextState.snapped = true;
 					return nextState;
@@ -132,14 +132,14 @@ public class EndGame extends SearchProblem {
 		EG_State newS = (EG_State) newState;
 		int cost = 0;
 		switch (op){
-		case "Up":
-		case "Down":
-		case "Right":
-		case "Left": break; //no cost for these operators
+		case "up":
+		case "down":
+		case "right":
+		case "left": break; //no cost for these operators
 		
-		case "Collect": cost += 3; break;
-		case "Kill": cost += (prevS.warriors.size() - newS.warriors.size()) * 2; break; //2*num of warriors killed
-		case "Snap": return 0; //no cost at all
+		case "collect": cost += 3; break;
+		case "kill": cost += (prevS.warriors.size() - newS.warriors.size()) * 2; break; //2*num of warriors killed
+		case "snap": return 0; //no cost at all
 		}
 		int i = newS.iPos.x;
 		int j = newS.iPos.y;
