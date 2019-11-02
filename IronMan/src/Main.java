@@ -7,16 +7,22 @@ public class Main {
 		ArrayList<String> operators = new ArrayList<String>(solNode.depth);
 		Node node = solNode;
 
+		//get all operators
 		while(node.operator != null) {
 			operators.add(node.operator);
 			node = node.parent;
 		}
+		
+		//concatenate all the operators
 		String plan = "";
 		for(int i=operators.size()-1; i>=0; i--) {
 			plan += operators.get(i) + ",";
 		}
+		
 		String cost = solNode.cost + "";
 		System.out.println(plan.substring(0, plan.length() - 1));
+		
+		//concatenate the plan, the cost and the explored nodes
 		return plan.substring(0, plan.length() - 1) + "; " + cost + "; " + exploredNodes;
 	}
 	
@@ -25,16 +31,20 @@ public class Main {
 		ArrayList<Node> nodes = new ArrayList<Node>();
 		
 		Node node = solNode;
+		
+		//get all the operators
 		while(node.operator != null) {
 			nodes.add(node);
 			node = node.parent;
 		}
 		
 		for(int i=nodes.size()-1; i>=0; i--) {
+			//get the state of the node
 			EG_State state = (EG_State)nodes.get(i).state;
 			Point iman = state.iPos;
 			LinkedList<Point> stones = state.stones;
 			LinkedList<Point> warriors = state.warriors;
+			//print the state
 			System.out.println(iman.toString()+"; "+stones.toString()+"; "+warriors.toString());
 		}
 	}
@@ -81,6 +91,7 @@ public class Main {
 		//make a problem
 		EndGame problem = new EndGame(new Point(m,n), iPos, tPos, stones, warriors);
 		
+		//encode the strategy into an int
 		int strategyInt = 0;
 		switch(strategy) {
 		case "DF": strategyInt=0; break;
@@ -101,7 +112,7 @@ public class Main {
 			visualizePath(solNode);
 		}
 		if(solNode == null) {
-			System.out.println("no solution");
+			System.out.println("There is no solution");
 			return "There is no solution";
 		}
 		else {
@@ -119,101 +130,11 @@ public class Main {
 		long totalTime;
 		
 		startTime = System.nanoTime();
-		System.out.println("******************* BFS ********************");
 		String sol_bf = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3", "BF", false);
 		System.out.println(sol_bf);
 		endTime   = System.nanoTime();
 		totalTime = endTime - startTime;
 		System.out.printf("BFS Duration: %.2f seconds", totalTime/1000000000.0);
-		System.out.println();
-		System.out.println("*********************************************");
-		System.out.println();
-		
-		
-		startTime = System.nanoTime();
-		System.out.println("******************* DFS ********************");
-		String sol_df = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3", "DF", false);
-		System.out.println(sol_df);
-		endTime   = System.nanoTime();
-		totalTime = endTime - startTime;
-		System.out.printf("DFS Duration: %.4f seconds", totalTime/1000000000.0);
-		System.out.println();
-		System.out.println("*********************************************");
-		System.out.println();
-		
-		
-		startTime = System.nanoTime();
-		System.out.println("******************* UCS ********************");
-		String sol_uc = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3", "UC", false);
-		System.out.println(sol_uc);
-		endTime   = System.nanoTime();
-		totalTime = endTime - startTime;
-		System.out.printf("UCS Duration: %.4f seconds", totalTime/1000000000.0);
-		System.out.println();
-		System.out.println("*********************************************");
-		System.out.println();
-		
-		
-//		startTime = System.nanoTime();
-//		System.out.println("******************* IDS ********************");
-//		String sol_id = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3", "ID", false);
-//		System.out.println(sol_id);
-//		endTime   = System.nanoTime();
-//		totalTime = endTime - startTime;
-//		System.out.printf("IDS Duration: %.4f seconds", totalTime/1000000000.0);
-//		System.out.println();
-//		System.out.println("*********************************************");
-//		System.out.println();
-		
-		
-//		startTime = System.nanoTime();
-//		System.out.println("******************* AS1 ********************");
-//		String sol_as1 = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3", "AS1", false);
-//		System.out.println(sol_as1);
-//		endTime   = System.nanoTime();
-//		totalTime = endTime - startTime;
-//		System.out.printf("AS1 Duration: %.4f seconds", totalTime/1000000000.0);
-//		System.out.println();
-//		System.out.println("*********************************************");
-//		System.out.println();
-		
-		
-//		startTime = System.nanoTime();
-//		System.out.println("******************* AS1 ********************");
-//		String sol_as2 = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3", "AS2", false);
-//		System.out.println(sol_as2);
-//		endTime   = System.nanoTime();
-//		totalTime = endTime - startTime;
-//		System.out.printf("AS2 Duration: %.4f seconds", totalTime/1000000000.0);
-//		System.out.println();
-//		System.out.println("*********************************************");
-//		System.out.println();
-		
-		
-//		startTime = System.nanoTime();
-//		System.out.println("******************* GR1 ********************");
-//		String sol_gr1 = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3", "GR1", false);
-//		System.out.println(sol_gr1);
-//		endTime   = System.nanoTime();
-//		totalTime = endTime - startTime;
-//		System.out.printf("GR1 Duration: %.4f seconds", totalTime/1000000000.0);
-//		System.out.println();
-//		System.out.println("*********************************************");
-//		System.out.println();
-		
-		
-//		startTime = System.nanoTime();
-//		System.out.println("******************* GR1 ********************");
-//		String sol_gr2 = solve("5,5;1,2;3,1;0,2,1,1,2,1,2,2,4,0,4,1;0,3,3,0,3,2,3,4,4,3", "GR2", false);
-//		System.out.println(sol_gr2);
-//		endTime   = System.nanoTime();
-//		totalTime = endTime - startTime;
-//		System.out.printf("GR2 Duration: %.4f seconds", totalTime/1000000000.0);
-//		System.out.println();
-//		System.out.println("*********************************************");
-//		System.out.println();
-		
-	
-	
+
 	}
 }
