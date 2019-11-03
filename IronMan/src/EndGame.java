@@ -7,12 +7,12 @@ public class EndGame extends SearchProblem {
 	Point tPos; //thanos position
 	Point gridSize; // x : 0 --> (gridSize.x - 1), y : 0 --> (gridSize.y - 1)
 	
-	//hashtable of explored states
-	//the key and the value both are the EG_State
+	//hashtable of explored states: the key and the value both are the EG_State
 	Hashtable<EG_State,EG_State> explored_states;
 	
 	public EndGame(Point gridSize, Point iPos, Point tPos, LinkedList <Point> stones, LinkedList<Point> warriors) {
-		super(new EG_State(iPos, stones, warriors), new LinkedList<String>()); //initial state, operators
+		//initial state, operators
+		super(new EG_State(iPos, stones, warriors), new LinkedList<String>()); 
 		operators.add("up");
 		operators.add("down");
 		operators.add("left");
@@ -47,12 +47,17 @@ public class EndGame extends SearchProblem {
 	//overriding the transition function 
 	@Override
 	public State transitionFun(Node node, String op) {
+		//type cast the generic state of the node to an end game state
 		EG_State nextState = ((EG_State)node.state).clone();
 
+		//if cost>100 then no need to generate child states as they will never reach the goal
 		if(node.cost > 100)
-			return null; //no need to generate child states as they will never reach the goal
+			return null; 
+		
+		//iron man's actual position
 		int i = nextState.iPos.x;
 		int j = nextState.iPos.y;
+		
 		switch(op) {
 			case "up":
 				if(i-1 < 0 || nextState.warriors.contains(new Point(i-1,j))) //outside the border or cell with warrior
@@ -106,14 +111,18 @@ public class EndGame extends SearchProblem {
 				if(!killed) return null; //noone to kill ==> invalid operator
 				break;
 			case "snap": 
-				if(nextState.stones.isEmpty() && tPos.equals(nextState.iPos)) {
+				if(nextState.stones.isEmpty() && tPos.equals(nextState.iPos)) {	//valid only if he collected all stones and standing on same cell as thanos
 					nextState.snapped = true;
 					return nextState;
 				}
 				break;
 		}
 		
+		//adjust the position of iron man (in case he moved up, down, left or right)
 		nextState.iPos = new Point(i,j);
+		
+		//check if the state is repeated, if so, don't enqueue it (redundant state)
+		//if it's not repeated, return it (new state)
 		return handleRepeatedStates(nextState);
 	}
 
@@ -138,8 +147,12 @@ public class EndGame extends SearchProblem {
 		int j = newS.iPos.y;
 		
 		//checking the cost of adjacency:
-		//adjacent to thanos or adjacent to warriors
+		
+		//if standing on same cell as thanos, -5
 		if( tPos.equals(new Point(i,j)) ) cost += 5;
+		
+		//adjacent to thanos -5 adjacent to warriors -1
+		
 		if(i-1 >= 0) { //check up for adjacency-damage
 			if( newS.warriors.contains(new Point(i-1,j)) ) cost += 1;
 			if( tPos.equals(new Point(i-1,j)) ) cost += 5;
@@ -163,6 +176,7 @@ public class EndGame extends SearchProblem {
 	//checking if a state is a repeated state
 	public EG_State handleRepeatedStates(EG_State newState)
 	{
+		//if the state isn't in the explored states hash set, then it's a new state, add it, and return it
 		if(! this.explored_states.containsKey(newState) ) {
 			this.explored_states.put(newState, newState);
 			return newState;
@@ -316,6 +330,7 @@ class EG_State extends State{
 	}
 	
 	@Override
+	//hash code to hash the state, it is used in the hash set of the explored state
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
