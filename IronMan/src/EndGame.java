@@ -50,8 +50,8 @@ public class EndGame extends SearchProblem {
 		//type cast the generic state of the node to an end game state
 		EG_State nextState = ((EG_State)node.state).clone();
 
-		//if cost>100 then no need to generate child states as they will never reach the goal
-		if(node.cost > 100)
+		//if cost>=100 then no need to generate child states as they will never reach the goal
+		if(node.cost >= 100)
 			return null; 
 		
 		//iron man's actual position
