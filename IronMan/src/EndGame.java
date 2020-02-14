@@ -1,21 +1,22 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
-import java.util.LinkedList;
 
 public class EndGame extends SearchProblem {
 	
 	// Global variables:
-	Point tPos; //thanos position
-	Point gridSize; // x : 0 --> (gridSize.x - 1), y : 0 --> (gridSize.y - 1)
+	public Point tPos; //thanos position
+	public Point gridSize; // x : 0 --> (gridSize.x - 1), y : 0 --> (gridSize.y - 1)
+	char[][] grid;
 	
 	//hash table of explored states
 	//the key is iron man position
 	//the value is a linked list of visited states whose *iron man's pos* is the same as the key
 	Hashtable<Point,ArrayList<EG_State>> explored_states;
 	
-	public EndGame(Point gridSize, Point iPos, Point tPos, ArrayList <Point> stones, ArrayList<Point> warriors) {
+	public EndGame(char[][] grid, Point iPos, Point tPos, ArrayList <Point> stones, ArrayList<Point> warriors) {
 		//super(new EG_State(iPos, stones, warriors), new LinkedList<String>()); //initial state, operators
-		super(new EG_State(iPos, stones, warriors), new Hashtable <Integer, String>() ); //initial state, operators
+		super(new EG_State(grid, iPos, stones, warriors), new Hashtable <Integer, String>() ); //initial state, operators
 		operators.put(0, "up");
 		operators.put(1, "down");
 		operators.put(2, "left");
@@ -23,7 +24,8 @@ public class EndGame extends SearchProblem {
 		operators.put(4, "collect");
 		operators.put(5, "kill");
 		operators.put(6, "snap");
-		this.gridSize = gridSize;
+		this.gridSize = new Point(grid.length, grid[0].length);
+		this.grid = grid;
 		this.tPos = tPos;
 		explored_states = new Hashtable<Point,ArrayList<EG_State>>();
 	}
@@ -33,6 +35,8 @@ public class EndGame extends SearchProblem {
 	public boolean goalTest(Node node) {
 		//type cast the generic state of the node to an end game state 
 		EG_State currentState = (EG_State)node.state;
+		int i = currentState.iPos.x;
+		int j = currentState.iPos.y;
 		
 		/* a node is the goal if: 
 		 * 1) iron man in the same cell as thanos
@@ -40,7 +44,7 @@ public class EndGame extends SearchProblem {
 		 * 3) he snapped his fingers
 		 * 4) while the damage (cost from root) was less than 100
 		 */
-		if(currentState.iPos.equals(tPos) && currentState.stones.isEmpty() 
+		if(currentState.grid[i][j] == 'T' && currentState.stones.isEmpty() 
 				&& currentState.snapped == true && node.cost < 100)
 			return true;
 		else
@@ -58,64 +62,63 @@ public class EndGame extends SearchProblem {
 		int j = nextState.iPos.y;
 		switch(op) {
 			case 0: //up
-				if(i-1 < 0 || nextState.warriors.contains(new Point(i-1,j))) //outside the border or cell with warrior
+				if(i-1 < 0 || nextState.grid[i-1][j] == 'W') //outside the border or cell with warrior
 					return null; //invalid operator
-				else if(tPos.equals(new Point(i-1,j)) && !nextState.stones.isEmpty()) //he can't move onto Thanos unless he had collected all the stones
+				else if(nextState.grid[i-1][j] == 'T' && !nextState.stones.isEmpty()) //he can't move onto Thanos unless he had collected all the stones
 					return null; //invalid operator
 				else i -= 1; break; //valid, update iPos
 			case 1: //down
-				if(i+1 >= gridSize.x || nextState.warriors.contains(new Point(i+1,j)))
+				if(i+1 >= gridSize.x || nextState.grid[i+1][j] == 'W')
 					return null; //invalid operator
-				else if(tPos.equals(new Point(i+1,j)) && !nextState.stones.isEmpty())
+				else if(nextState.grid[i+1][j] == 'T' && !nextState.stones.isEmpty())
 					return null;
 				else i += 1; break;
 			case 2: //left
-				if(j-1 < 0 || nextState.warriors.contains(new Point(i,j-1)))
+				if(j-1 < 0 || nextState.grid[i][j-1] == 'W')
 					return null; //invalid operator
-				else if(tPos.equals(new Point(i,j-1)) && !nextState.stones.isEmpty() )
+				else if(nextState.grid[i][j-1] == 'T' && !nextState.stones.isEmpty() )
 					return null;
 				else j -= 1; break;
 			case 3: //right 
-				if(j+1 >= gridSize.y || nextState.warriors.contains(new Point(i,j+1)))
+				if(j+1 >= gridSize.y || grid[i][j+1] == 'W')
 					return null; //invalid operator
-				else if(tPos.equals(new Point(i,j+1)) && !nextState.stones.isEmpty())
+				else if(nextState.grid[i][j+1] == 'T' && !nextState.stones.isEmpty())
 					return null;
 				else j += 1; break;
 			case 4: //collect
-				if(!nextState.stones.contains(nextState.iPos))
+				if(nextState.grid[i][j] != 'S')
 					return null; //invalid operator
 				else {
 					nextState.stones.remove(nextState.iPos);
-					//System.out.println("collecting");
-					//d += 3;
+					nextState.grid[i][j] = '\u0000';
 				} break;
 			case 5: //kill
 				boolean killed = false;
 				//kill warriors in adjacent cells
-				if(i-1 >= 0 && nextState.warriors.contains(new Point(i-1,j)) ) {
+				if(i-1 >= 0 && nextState.grid[i-1][j] == 'W' ) {
 					killed = true;
-					//d += 2;
 					nextState.warriors.remove(new Point(i-1,j));
+					nextState.grid[i-1][j] = '\u0000';
 					}
-				if(i+1 < gridSize.x && nextState.warriors.contains(new Point(i+1,j)) ) {
+				if(i+1 < gridSize.x && nextState.grid[i+1][j] == 'W' ) {
 					killed = true;
-					//d += 2;
 					nextState.warriors.remove(new Point(i+1,j));
+					nextState.grid[i+1][j] = '\u0000';
 					}
-				if(j+1 < gridSize.y && nextState.warriors.contains(new Point(i,j+1)) ) {
+				if(j+1 < gridSize.y && nextState.grid[i][j+1] == 'W' ) {
 					killed = true;
-					//d += 2;
 					nextState.warriors.remove(new Point(i,j+1));
+					nextState.grid[i][j+1] = '\u0000';
 				}
-				if(j-1 >= 0 && nextState.warriors.contains(new Point(i,j-1)) ) {
+				if(j-1 >= 0 && nextState.grid[i][j-1] == 'W' ) {
 					killed = true;
-					//d += 2;
 					nextState.warriors.remove(new Point(i,j-1));
+					nextState.grid[i][j-1] = '\u0000';
 				}
 				if(!killed) return null; //noone to kill ==> invalid operator
 				break;
 			case 6: //snap
-				if(tPos.equals(nextState.iPos) && nextState.stones.isEmpty()) {
+				if(nextState.grid[i][j] == 'T' && nextState.stones.isEmpty()) {
 					nextState.snapped = true;
 					return nextState;
 				}
@@ -150,22 +153,31 @@ public class EndGame extends SearchProblem {
 		
 		//checking the cost of adjacency:
 		//adjacent to thanos or adjacent to warriors
-		if( tPos.equals(new Point(i,j)) ) cost += 5;
+		//if( tPos.equals(new Point(i,j)) ) cost += 5;
+		if( newS.grid[i][j] == 'T' ) cost += 5;
 		if(i-1 >= 0) { //check up for adjacency-damage
-			if( newS.warriors.contains(new Point(i-1,j)) ) cost += 1;
-			if( tPos.equals(new Point(i-1,j)) ) cost += 5;
+			//if( newS.warriors.contains(new Point(i-1,j)) ) cost += 1;
+			//if( tPos.equals(new Point(i-1,j)) ) cost += 5;
+			if( newS.grid[i-1][j] == 'W' ) cost += 1;
+			if( newS.grid[i-1][j] == 'T' ) cost += 5;
 		}
 		if(i+1 < gridSize.x) { //check down for adjacency-damage
-			if( newS.warriors.contains(new Point(i+1,j)) ) cost += 1;
-			if( tPos.equals(new Point(i+1,j)) ) cost += 5;
+			//if( newS.warriors.contains(new Point(i+1,j)) ) cost += 1;
+			//if( tPos.equals(new Point(i+1,j)) ) cost += 5;
+			if( newS.grid[i+1][j] == 'W' ) cost += 1;
+			if( newS.grid[i+1][j] == 'T' ) cost += 5;
 		}
 		if(j+1 < gridSize.y) { //check right for adjacency-damage
-			if( newS.warriors.contains(new Point(i,j+1)) ) cost += 1;
-			if( tPos.equals(new Point(i,j+1)) ) cost += 5;
+			//if( newS.warriors.contains(new Point(i,j+1)) ) cost += 1;
+			//if( tPos.equals(new Point(i,j+1)) ) cost += 5;
+			if( newS.grid[i][j+1] == 'W' ) cost += 1;
+			if( newS.grid[i][j+1] == 'T' ) cost += 5;
 		}
 		if(j-1 >= 0) { //check left for adjacency-damage
-			if( newS.warriors.contains(new Point(i,j-1)) ) cost += 1;
-			if( tPos.equals(new Point(i,j-1)) ) cost += 5;
+			//if( newS.warriors.contains(new Point(i,j-1)) ) cost += 1;
+			//if( tPos.equals(new Point(i,j-1)) ) cost += 5;
+			if( newS.grid[i][j-1] == 'W' ) cost += 1;
+			if( newS.grid[i][j-1] == 'T' ) cost += 5;
 		}
 		
 		return cost;
@@ -227,16 +239,20 @@ public class EndGame extends SearchProblem {
 			int i = stone.x;
 			int j = stone.y;
 			if(i-1 >= 0)
-				if( state.warriors.contains(new Point(i-1,j)) ) numAdjWarriors += 1;
+				//if( state.warriors.contains(new Point(i-1,j)) ) numAdjWarriors += 1;
+				if( state.grid[i-1][j] == 'W' ) numAdjWarriors += 1;
 				
 			if(i+1 < gridSize.x)
-				if( state.warriors.contains(new Point(i+1,j)) ) numAdjWarriors += 1;
+				//if( state.warriors.contains(new Point(i+1,j)) ) numAdjWarriors += 1;
+				if( state.grid[i+1][j] == 'W' ) numAdjWarriors += 1;
 			
 			if(j+1 < gridSize.y) 
-				if( state.warriors.contains(new Point(i,j+1)) ) numAdjWarriors += 1;
+				//if( state.warriors.contains(new Point(i,j+1)) ) numAdjWarriors += 1;
+				if( state.grid[i][j+1] == 'W' ) numAdjWarriors += 1;
 			
 			if(j-1 >= 0)
-				if( state.warriors.contains(new Point(i,j-1)) ) numAdjWarriors += 1;
+				//if( state.warriors.contains(new Point(i,j-1)) ) numAdjWarriors += 1;
+				if( state.grid[i][j-1] == 'W' ) numAdjWarriors += 1;
 		}
 		
 		return 3 * state.stones.size() + 1 * numAdjWarriors + 10;
@@ -260,21 +276,26 @@ class EG_State extends State{
 	//whether he snapped or not yet
 	boolean snapped;
 	
+	char[][] grid;
+	
 	//initial state
-	public EG_State(Point iPos, ArrayList<Point> stones, ArrayList<Point> warriors) { 
+	public EG_State(char[][] grid, Point iPos,  ArrayList<Point> stones, ArrayList<Point> warriors) { 
 		
 		this.iPos = iPos;
 		this.stones = stones;
 		this.warriors = warriors;
 		snapped = false;
+		this.grid = grid;
+		
 	}
 	
 	//any other state
-	public EG_State(Point iPos, ArrayList<Point> stones, ArrayList<Point> warriors, boolean snapped) {
+	public EG_State(char[][] grid, Point iPos, ArrayList<Point> stones, ArrayList<Point> warriors, boolean snapped) {
 		this.iPos = iPos;
 		this.stones = stones;
 		this.warriors = warriors;
 		this.snapped = snapped;
+		this.grid = grid;
 	}
 	
 	//used for expanding the state's children
@@ -283,13 +304,22 @@ class EG_State extends State{
 	public EG_State clone() {
 		ArrayList<Point> stonesCopy = new ArrayList<Point>();
 		ArrayList<Point> warriorsCopy = new ArrayList<Point>();
+		char[][] newGrid = new char[this.grid.length][this.grid[0].length];
+		
+		//newGrid[this.tPos.x][this.tPos.y] = 'T';
 		for(Point p : this.stones) {
 			stonesCopy.add(p.clone());
+			//newGrid[p.x][p.y] = 'S';
 		}
 		for(Point p : this.warriors) {
 			warriorsCopy.add(p.clone());
+			//newGrid[p.x][p.y] = 'W';
 		}
-		return new EG_State(this.iPos.clone(), stonesCopy, warriorsCopy, this.snapped);
+		
+	    for (int i = 0; i < this.grid.length; i++) {
+	        newGrid[i] = Arrays.copyOf(this.grid[i], this.grid[i].length);
+	    }  
+		return new EG_State(newGrid, this.iPos.clone(), stonesCopy, warriorsCopy, this.snapped);
 	}
 
 	//just for testing purposes

@@ -40,6 +40,20 @@ public class Main {
 		}
 	}
 	
+	public static char[][] generateGrid(int m, int n, Point iPos, Point tPos, ArrayList<Point> stones, ArrayList<Point> warriors){
+		
+		char[][] grid = new char[m][n];
+		grid[tPos.x][tPos.y] = 'T';
+
+		for (int i = 0; i < stones.size() ; i+=1)
+			grid[stones.get(i).x][stones.get(i).y] = 'S';
+
+		for (int i = 0; i < warriors.size(); i+=1)
+			grid[warriors.get(i).x][warriors.get(i).y] = 'W';
+		
+		return grid;
+	}
+	
 	
 	public static String solve(String grid, String strategy, boolean visualize) {
 		
@@ -93,7 +107,9 @@ public class Main {
 		}
 				
 		//make a problem
-		EndGame problem = new EndGame(new Point(m,n), iPos, tPos, stones, warriors);
+		//EndGame problem = new EndGame(new Point(m,n), iPos, tPos, stones, warriors);
+		char [][] g = generateGrid(m,n,iPos, tPos, stones, warriors);
+		EndGame problem = new EndGame(g, iPos, tPos, stones, warriors);
 		
 		//get the solution using the generic search procedure
 		Node solNode = SearchProblem.genericSearch(problem, strategyInt);
